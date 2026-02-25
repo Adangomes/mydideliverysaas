@@ -12,106 +12,84 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
 
     <style>
-        :root { --primary: #e74c3c; --dark: #2c3e50; --light: #f8f9fa; --success: #27ae60; }
+        :root { --primary: #e74c3c; --dark: #2c3e50; --light: #f8f9fa; --success: #27ae60; --gray: #95a5a6; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; scroll-behavior: smooth; }
-        body { background: var(--light); padding-bottom: 110px; }
+        body { background: white; padding-bottom: 110px; }
         
-        header { background: white; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
+        header { background: white; padding: 20px; border-bottom: 1px solid #eee; position: sticky; top: 0; z-index: 100; }
         .header-content { display: flex; align-items: center; gap: 15px; max-width: 800px; margin: 0 auto; position: relative; }
-        #loja-logo { width: 65px; height: 65px; border-radius: 50%; object-fit: cover; background: #eee; cursor: pointer; border: 2px solid var(--primary); }
+        #loja-logo { width: 50px; height: 50px; border-radius: 12px; object-fit: cover; background: #eee; cursor: pointer; }
         
+        .user-access { position: absolute; right: 0; top: 50%; transform: translateY(-50%); background: #f4f4f4; border: none; color: #888; width: 40px; height: 40px; border-radius: 8px; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; }
+
         /* CATEGORIAS */
-        .categorias-wrapper { background: white; padding: 10px 0; position: sticky; top: 105px; z-index: 90; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); overflow-x: auto; white-space: nowrap; -webkit-overflow-scrolling: touch; }
+        .categorias-wrapper { background: white; padding: 15px 0; position: sticky; top: 91px; z-index: 90; overflow-x: auto; white-space: nowrap; border-bottom: 1px solid #eee; }
         .categorias-wrapper::-webkit-scrollbar { display: none; }
-        .cat-btn { display: inline-block; background: #eee; color: #666; padding: 8px 20px; border-radius: 20px; margin-left: 10px; font-size: 0.85rem; font-weight: 600; cursor: pointer; text-decoration: none; transition: 0.3s; }
-        .cat-btn:last-child { margin-right: 10px; }
+        .cat-btn { display: inline-block; background: #f4f4f4; color: #666; padding: 6px 18px; border-radius: 20px; margin-left: 10px; font-size: 0.85rem; font-weight: 600; cursor: pointer; text-decoration: none; transition: 0.3s; border: 1px solid transparent; }
         .cat-btn.active { background: var(--primary); color: white; }
 
-        .section-title { padding: 20px 15px 10px; font-size: 1.2rem; color: var(--dark); font-weight: 700; }
-
-        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: var(--dark); color: white; padding: 12px 25px; border-radius: 30px; display: none; z-index: 3000; font-size: 0.9rem; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        .section-title { padding: 25px 15px 10px; font-size: 1.1rem; color: var(--dark); font-weight: 700; }
 
         #cardapio-corpo { max-width: 800px; margin: 0 auto; padding: 0 15px; }
-        .item-produto { background: white; margin-bottom: 12px; padding: 15px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .info-p h3 { font-size: 1rem; color: var(--dark); }
-        .info-p p { font-size: 0.8rem; color: #777; margin: 4px 0; }
-        .preco { color: var(--primary); font-weight: 700; font-size: 1.1rem; }
-        .foto-p img { width: 90px; height: 90px; border-radius: 12px; object-fit: cover; cursor: pointer; border: 1px solid #eee; }
-
-        .btn-add { background: var(--primary); color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-weight: 600; margin-top: 8px; width: 100%; }
-
-        #btn-carrinho-fixo { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--primary); color: white; padding: 18px 30px; border-radius: 50px; display: flex; justify-content: space-between; width: 92%; max-width: 450px; box-shadow: 0 8px 25px rgba(231, 76, 60, 0.4); cursor: pointer; z-index: 999; font-weight: bold; }
-
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 2000; align-items: center; justify-content: center; overflow-y: auto; }
-        .modal-content { background: white; width: 95%; max-width: 500px; padding: 25px; border-radius: 20px; margin: 20px auto; }
         
-        input, select { width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 10px; font-size: 0.9rem; }
-        .area-admin { display: none; background: #2c3e50; padding: 10px; text-align: center; color: white; position: sticky; top: 105px; z-index: 101; }
+        /* ITEM PRODUTO ESTILO REFERENCIA */
+        .item-produto { background: white; margin-bottom: 20px; padding: 0; display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; border-bottom: 1px solid #f1f1f1; padding-bottom: 15px; }
+        .info-p h3 { font-size: 0.95rem; color: var(--dark); margin-bottom: 5px; }
+        .info-p p { font-size: 0.8rem; color: #888; line-height: 1.3; margin-bottom: 8px; }
+        .preco { color: var(--dark); font-weight: 600; font-size: 0.9rem; display: block; }
+        
+        .foto-p img { width: 100px; height: 100px; border-radius: 12px; object-fit: cover; cursor: pointer; background: #f9f9f9; }
+
+        #btn-carrinho-fixo { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--primary); color: white; padding: 15px 25px; border-radius: 50px; display: flex; justify-content: space-between; width: 92%; max-width: 450px; box-shadow: 0 8px 25px rgba(231, 76, 60, 0.3); cursor: pointer; z-index: 999; font-weight: bold; }
+
+        .area-admin { display: none; background: #1a252f; padding: 12px; text-align: center; color: white; position: sticky; top: 0; z-index: 1000; }
+        .edit { transition: 0.3s; }
+        .edit:focus { outline: none; background: #fffde7; border-radius: 4px; padding: 2px 5px; }
     </style>
 </head>
 <body>
 
-    <div id="toast" class="toast">✓ Item adicionado!</div>
-
     <div id="area-admin" class="area-admin">
-        <button onclick="adicionarNovoProduto()" style="padding:8px; border-radius:5px; border:none; background:var(--success); color:white; font-weight:600;">+ Adicionar Produto</button>
-        <small style="display:block; margin-top:5px;">Modo Edição Ativo</small>
+        <button onclick="adicionarNovoProduto()" style="padding:8px 20px; border-radius:8px; border:none; background:var(--success); color:white; font-weight:600; cursor:pointer">+ Adicionar Produto</button>
+        <div style="font-size: 0.7rem; margin-top: 5px; color: #bdc3c7;">MODO EDIÇÃO ATIVO - Clique nos textos para alterar</div>
         <input type="file" id="upload-file" style="display:none" onchange="processarUpload(event)">
     </div>
 
     <header>
         <div class="header-content">
-            <button onclick="loginAdmin()" style="position:absolute; right:0; top:0; background:none; border:none; color:#eee;"><i class="fa fa-cog"></i></button>
-            <img id="loja-logo" onclick="acionarUpload('logo')" src="" alt="Logo">
+            <img id="loja-logo" onclick="acionarUpload('logo')" src="https://via.placeholder.com/50" alt="Logo">
             <div>
-                <h1 id="nome-loja">Carregando...</h1>
-                <p id="rua-loja" style="font-size:0.7rem; color:#888"></p>
+                <h1 id="nome-loja" style="font-size:1.1rem">Carregando...</h1>
+                <p id="rua-loja" style="font-size:0.75rem; color:#888"></p>
             </div>
+            <button class="user-access" onclick="loginAdmin()"><i class="fa fa-user-circle"></i></button>
         </div>
     </header>
 
-    <div class="categorias-wrapper" id="cat-list">
-        </div>
+    <div class="categorias-wrapper" id="cat-list"></div>
 
     <main id="cardapio-corpo">
-        <div style="text-align:center; padding:50px;">
-            <div class="spinner" style="display:inline-block"></div>
-            <p>Buscando cardápio...</p>
-        </div>
+        <p style="text-align:center; padding:50px;">Buscando cardápio...</p>
     </main>
 
     <div id="btn-carrinho-fixo" onclick="abrirCarrinho()">
-        <span><i class="fa fa-shopping-cart"></i> <span id="cart-qtd">0</span></span>
+        <span><i class="fa fa-shopping-cart"></i> <span id="cart-qtd">0</span> Itens</span>
         <span id="cart-total">R$ 0,00</span>
     </div>
 
-    <div id="modal-carrinho" class="modal">
-        <div class="modal-content">
-            <h2 style="margin-bottom:15px">Resumo do Pedido</h2>
-            <div id="itens-checkout" style="max-height: 200px; overflow-y: auto; border-bottom:1px solid #eee; padding-bottom:10px; margin-bottom:15px"></div>
-            
-            <label>Seu Nome:</label>
-            <input type="text" id="c-nome" placeholder="Nome Completo">
-            
-            <label>Endereço Jaraguá/Guaramirim/Schroeder:</label>
-            <input type="text" id="c-end" onblur="calcularRota()" placeholder="Rua, Número, Bairro">
-            
-            <label>Forma de Pagamento:</label>
-            <select id="c-pag">
-                <option value="Dinheiro">Dinheiro</option>
-                <option value="Pix">Pix</option>
-                <option value="Cartão">Cartão (Entregador leva maquininha)</option>
-            </select>
-
-            <div id="resumo-valores" style="background:#f9f9f9; padding:15px; border-radius:10px; margin-top:10px">
-                <div style="display:flex; justify-content:space-between"><span>Subtotal:</span> <span id="v-sub">R$ 0,00</span></div>
-                <div style="display:flex; justify-content:space-between"><span>Taxa de Entrega:</span> <span id="v-taxa">R$ 0,00</span></div>
-                <div style="display:flex; justify-content:space-between; font-weight:700; color:var(--primary); font-size:1.2rem; margin-top:10px"><span>Total:</span> <span id="v-total">R$ 0,00</span></div>
-            </div>
-
-            <button onclick="enviarWhats()" id="btn-final" style="width:100%; background:var(--success); color:white; border:none; padding:18px; border-radius:12px; font-weight:bold; margin-top:15px; cursor:pointer">ENVIAR PEDIDO VIA WHATSAPP</button>
-            <button onclick="fecharModais()" style="width:100%; background:none; border:none; color:#999; margin-top:10px; cursor:pointer">Voltar</button>
-        </div>
+    <div id="modal-carrinho" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:white; z-index:2000; overflow-y:auto; padding:20px;">
+        <h2 style="margin-bottom:20px">Seu Pedido</h2>
+        <div id="itens-checkout"></div>
+        <hr style="margin:20px 0; border:0; border-top:1px solid #eee">
+        <input type="text" id="c-nome" placeholder="Seu Nome">
+        <input type="text" id="c-end" placeholder="Endereço Completo">
+        <select id="c-pag">
+            <option value="Pix">Pix</option>
+            <option value="Dinheiro">Dinheiro</option>
+            <option value="Cartão">Cartão</option>
+        </select>
+        <button onclick="enviarWhats()" style="width:100%; background:var(--success); color:white; border:none; padding:15px; border-radius:12px; font-weight:bold; margin-top:10px;">PEDIR AGORA</button>
+        <button onclick="document.getElementById('modal-carrinho').style.display='none'" style="width:100%; background:none; border:none; color:#999; margin-top:15px;">Continuar Comprando</button>
     </div>
 
     <script>
@@ -127,64 +105,50 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
         const storage = firebase.storage();
-        const GEO_KEY = "208f6874a48c45e68761f3d994db6775";
 
         const params = new URLSearchParams(window.location.search);
         const LOJA_ID = params.get('loja');
 
         let dadosLoja = {};
         let carrinho = [];
-        let taxaFinal = 0;
-        let uploadTarget = "";
+        let uploadTarget = null;
 
         async function init() {
-            if(!LOJA_ID) {
-                document.body.innerHTML = "<div style='text-align:center; padding:50px;'><h1>Bem-vindo ao MyDii!</h1><p>Acesse a URL de um restaurante para ver o cardápio.</p></div>";
-                return;
-            }
-
-            const snap = await db.ref(`lojas/${LOJA_ID}`).once('value');
-            dadosLoja = snap.val();
-            if(!dadosLoja) {
-                document.body.innerHTML = "<div style='text-align:center; padding:50px;'><h1>404</h1><p>Restaurante não encontrado.</p></div>";
-                return;
-            }
-
-            document.getElementById('nome-loja').innerText = dadosLoja.config.nomeLoja;
-            document.getElementById('loja-logo').src = dadosLoja.config.logo;
-            document.getElementById('rua-loja').innerText = dadosLoja.config.rua;
-            render();
+            if(!LOJA_ID) return;
+            db.ref(`lojas/${LOJA_ID}`).on('value', snap => {
+                dadosLoja = snap.val();
+                if(!dadosLoja) return;
+                render();
+            });
         }
 
         function render() {
+            document.getElementById('nome-loja').innerText = dadosLoja.config.nomeLoja;
+            document.getElementById('loja-logo').src = dadosLoja.config.logo;
+            document.getElementById('rua-loja').innerText = dadosLoja.config.rua;
+
             const corpo = document.getElementById('cardapio-corpo');
             const catList = document.getElementById('cat-list');
             corpo.innerHTML = "";
             catList.innerHTML = "";
 
-            // Organizar por categorias
             const produtos = dadosLoja.produtos || [];
             const categorias = [...new Set(produtos.map(p => p.categoria || "Geral"))];
 
             categorias.forEach(cat => {
-                // Adicionar botão na barra superior
                 const catID = cat.replace(/\s/g, '');
                 catList.innerHTML += `<a href="#section-${catID}" class="cat-btn">${cat}</a>`;
-
-                // Adicionar título da seção
                 corpo.innerHTML += `<div class="section-title" id="section-${catID}">${cat}</div>`;
 
-                // Filtrar e renderizar produtos dessa categoria
                 produtos.forEach((p, i) => {
                     if((p.categoria || "Geral") === cat) {
                         corpo.innerHTML += `
                             <div class="item-produto">
-                                <div class="info-p" style="flex:1">
+                                <div class="info-p" style="flex:1" onclick="add(${i})">
                                     <h3 class="edit" data-path="produtos/${i}/title">${p.title}</h3>
                                     <p class="edit" data-path="produtos/${i}/ingredientes">${p.ingredientes}</p>
-                                    <p style="font-size:0.7rem; color:var(--primary)" class="edit" data-path="produtos/${i}/categoria">${p.categoria || "Geral"}</p>
+                                    <small class="edit" style="color:var(--primary); font-weight:bold; display:block; margin-bottom:5px" data-path="produtos/${i}/categoria">${p.categoria || "Geral"}</small>
                                     <span class="preco">R$ <span class="edit" data-path="produtos/${i}/price">${parseFloat(p.price).toFixed(2)}</span></span>
-                                    <button class="btn-add" onclick="add(${i})">Adicionar</button>
                                 </div>
                                 <div class="foto-p">
                                     <img src="${p.image}" onclick="acionarUpload('produto', ${i})">
@@ -194,12 +158,13 @@
                     }
                 });
             });
+
+            if(document.getElementById('area-admin').style.display === 'block') ativarEdicao();
         }
 
         function add(i) {
+            if(document.getElementById('area-admin').style.display === 'block') return; // Bloqueia compra no modo edit
             carrinho.push(dadosLoja.produtos[i]);
-            const t = document.getElementById('toast');
-            t.style.display = 'block'; setTimeout(() => t.style.display='none', 2000);
             updateCartBar();
         }
 
@@ -209,58 +174,18 @@
             document.getElementById('cart-total').innerText = `R$ ${sub.toFixed(2)}`;
         }
 
-        async function calcularRota() {
-            const dest = document.getElementById('c-end').value;
-            if(!dest || !dadosLoja.config.lat) return;
-
-            try {
-                const url = `https://api.geoapify.com/v1/routing?waypoints=${dadosLoja.config.lat},${dadosLoja.config.lon}|${encodeURIComponent(dest)}&mode=drive&apiKey=${GEO_KEY}`;
-                const res = await fetch(url);
-                const data = await res.json();
-                
-                const metros = data.features[0].properties.distance;
-                const km = metros / 1000;
-                taxaFinal = km * (dadosLoja.config.valorKm || 1.5);
-                
-                atualizarValoresFinais();
-            } catch (e) {
-                alert("Erro ao calcular frete. Verifique o endereço.");
-            }
-        }
-
-        function atualizarValoresFinais() {
-            const sub = carrinho.reduce((a, b) => a + parseFloat(b.price), 0);
-            document.getElementById('v-sub').innerText = `R$ ${sub.toFixed(2)}`;
-            document.getElementById('v-taxa').innerText = `R$ ${taxaFinal.toFixed(2)}`;
-            document.getElementById('v-total').innerText = `R$ ${(sub + taxaFinal).toFixed(2)}`;
-        }
-
-        function enviarWhats() {
-            const nome = document.getElementById('c-nome').value;
-            const end = document.getElementById('c-end').value;
-            const pag = document.getElementById('c-pag').value;
-            if(!nome || !end) return alert("Preencha nome e endereço!");
-
-            const sub = carrinho.reduce((a, b) => a + parseFloat(b.price), 0);
-            const itensTxt = carrinho.map(i => `- ${i.title} (R$ ${parseFloat(i.price).toFixed(2)})`).join('%0A');
-            
-            const texto = `*NOVO PEDIDO - ${dadosLoja.config.nomeLoja}*%0A%0A*Cliente:* ${nome}%0A*Endereço:* ${end}%0A*Pagamento:* ${pag}%0A%0A*Itens:*%0A${itensTxt}%0A%0A*Subtotal:* R$ ${sub.toFixed(2)}%0A*Entrega:* R$ ${taxaFinal.toFixed(2)}%0A*TOTAL:* R$ ${(sub+taxaFinal).toFixed(2)}`;
-            
-            window.open(`https://wa.me/${dadosLoja.config.whatsapp}?text=${texto}`);
-        }
-
         function loginAdmin() {
             const p = prompt("Senha do Restaurante:");
             if(p === dadosLoja.config.senhaAdmin) {
                 document.getElementById('area-admin').style.display='block';
                 ativarEdicao();
-            }
+            } else { alert("Senha incorreta!"); }
         }
 
         function ativarEdicao() {
             document.querySelectorAll('.edit').forEach(el => {
                 el.contentEditable = true;
-                el.style.border = "1px dashed #ccc";
+                el.style.borderBottom = "1px dashed #e74c3c";
                 el.onblur = async () => {
                     let v = el.innerText;
                     const path = el.getAttribute('data-path');
@@ -278,7 +203,8 @@
 
         async function processarUpload(e) {
             const file = e.target.files[0];
-            if(!file) return;
+            if(!file || !uploadTarget) return;
+            
             const ref = storage.ref(`lojas/${LOJA_ID}/${Date.now()}_${file.name}`);
             await ref.put(file);
             const url = await ref.getDownloadURL();
@@ -288,35 +214,41 @@
             } else {
                 await db.ref(`lojas/${LOJA_ID}/produtos/${uploadTarget.index}/image`).set(url);
             }
-            location.reload();
+            uploadTarget = null;
         }
 
         async function adicionarNovoProduto() {
             const p = dadosLoja.produtos || [];
             p.push({
                 title: "Novo Item", 
-                ingredientes: "Descrição do item...", 
-                price: 10.00, 
+                ingredientes: "Toque para editar a descrição...", 
+                price: 0.00, 
                 categoria: "Geral",
                 image: "https://via.placeholder.com/150"
             });
             await db.ref(`lojas/${LOJA_ID}/produtos`).set(p);
-            location.reload();
         }
 
         function abrirCarrinho() {
-            if(carrinho.length === 0) return alert("Seu carrinho está vazio!");
+            if(carrinho.length === 0) return alert("Carrinho vazio!");
             document.getElementById('itens-checkout').innerHTML = carrinho.map(i => `
-                <div style="display:flex; justify-content:space-between; margin-bottom:5px">
-                    <span>${i.title}</span>
-                    <b>R$ ${parseFloat(i.price).toFixed(2)}</b>
+                <div style="display:flex; justify-content:space-between; margin-bottom:10px">
+                    <span>${i.title}</span><b>R$ ${parseFloat(i.price).toFixed(2)}</b>
                 </div>
             `).join("");
-            atualizarValoresFinais();
-            document.getElementById('modal-carrinho').style.display='flex';
+            document.getElementById('modal-carrinho').style.display='block';
         }
 
-        function fecharModais() { document.querySelectorAll('.modal').forEach(m => m.style.display='none'); }
+        function enviarWhats() {
+            const nome = document.getElementById('c-nome').value;
+            const end = document.getElementById('c-end').value;
+            if(!nome || !end) return alert("Preencha nome e endereço!");
+
+            const itensTxt = carrinho.map(i => `- ${i.title}`).join('%0A');
+            const total = carrinho.reduce((a, b) => a + parseFloat(b.price), 0);
+            const texto = `*NOVO PEDIDO*%0A*Cliente:* ${nome}%0A*Endereço:* ${end}%0A%0A*Itens:*%0A${itensTxt}%0A%0A*Total:* R$ ${total.toFixed(2)}`;
+            window.open(`https://wa.me/${dadosLoja.config.whatsapp}?text=${texto}`);
+        }
 
         window.onload = init;
     </script>
