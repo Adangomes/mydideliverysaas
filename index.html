@@ -3,129 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Best Delivery - Cardápio</title>
+    <title>Delivery App Profissional</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
 
     <style>
-        :root { --primary: #ea1d2c; --dark: #3e3e3e; --success: #27ae60; --bg: #f8f9fa; }
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; outline: none; }
-        body { background: var(--bg); color: var(--dark); padding-bottom: 100px; }
+        :root { --primary: #ea1d2c; --dark: #3e3e3e; --success: #27ae60; --bg: #f8f9fa; --gray: #717171; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background: var(--bg); color: var(--dark); padding-bottom: 80px; }
 
+        /* HEADER */
         header { background: white; padding: 40px 20px 20px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05); position: relative; }
         #loja-logo { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid white; box-shadow: 0 4px 10px rgba(0,0,0,0.1); margin-bottom: 10px; }
-        #nome-loja { font-size: 1.2rem; font-weight: 700; color: #000; }
+        .status-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; margin-top: 5px; }
+        .open { background: #e7f9ee; color: var(--success); }
+        .closed { background: #feebee; color: var(--primary); }
         .user-btn { position: absolute; right: 20px; top: 20px; background: none; border: none; font-size: 24px; color: #888; cursor: pointer; }
 
-        .categorias-nav { display: flex; overflow-x: auto; padding: 15px; gap: 10px; background: white; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #eee; }
-        .categorias-nav::-webkit-scrollbar { display: none; }
-        .cat-item { background: #f2f2f2; padding: 8px 18px; border-radius: 8px; text-decoration: none; color: #666; font-size: 13px; font-weight: 600; white-space: nowrap; }
+        /* ADMIN PANEL */
+        .area-admin { display: none; background: #1a252f; padding: 15px; color: white; position: sticky; top: 0; z-index: 2000; text-align: center; }
+        .admin-section { background: rgba(255,255,255,0.1); padding: 10px; border-radius: 8px; margin-bottom: 10px; }
+        .btn-adm { padding: 8px 12px; border-radius: 5px; border: none; font-size: 11px; font-weight: bold; margin: 3px; cursor: pointer; }
 
+        /* CATEGORIAS */
+        .categorias-nav { display: flex; overflow-x: auto; padding: 15px; gap: 10px; background: white; position: sticky; top: 0; z-index: 100; border-bottom: 1px solid #eee; }
+        .cat-item { background: #f2f2f2; padding: 8px 18px; border-radius: 8px; text-decoration: none; color: #666; font-size: 13px; font-weight: 600; white-space: nowrap; }
+        .cat-edit-row { display: flex; align-items: center; gap: 5px; margin-bottom: 5px; }
+
+        /* PRODUTOS */
         .container { max-width: 600px; margin: 0 auto; padding: 15px; }
-        .section-title { font-size: 1.1rem; font-weight: 700; margin: 25px 0 15px; color: #000; }
         .card-produto { background: white; display: flex; padding: 15px; border-radius: 12px; margin-bottom: 12px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); cursor: pointer; gap: 12px; border: 1px solid #f9f9f9; }
         .prod-info { flex: 1; }
-        .prod-info h3 { font-size: 0.95rem; margin-bottom: 4px; color: #333; }
-        .prod-info p { font-size: 0.8rem; color: #717171; line-height: 1.3; margin-bottom: 8px; }
-        .prod-price { color: var(--success); font-weight: 600; }
         .prod-img img { width: 90px; height: 90px; border-radius: 8px; object-fit: cover; }
 
-        .area-admin { display: none; background: #2c3e50; padding: 15px; text-align: center; position: sticky; top: 0; z-index: 2000; }
-        .btn-adm { padding: 10px; border-radius: 5px; border: none; font-size: 11px; font-weight: bold; margin: 3px; cursor: pointer; }
-        .admin-box { display: none; margin-top: 10px; padding: 10px; background: #fdfdfd; border-radius: 8px; border: 1px dashed #ccc; }
-        .admin-box input, .admin-box select { width: 100%; padding: 8px; margin: 4px 0; border-radius: 4px; border: 1px solid #ddd; font-size: 11px; }
+        /* FOOTER TAB BAR */
+        .tab-bar { position: fixed; bottom: 0; left: 0; width: 100%; background: white; display: flex; justify-content: space-around; padding: 10px 0; border-top: 1px solid #eee; z-index: 1500; }
+        .tab-item { text-align: center; color: var(--gray); font-size: 11px; text-decoration: none; position: relative; flex: 1; border:none; background:none; cursor:pointer;}
+        .tab-item i { font-size: 20px; display: block; margin-bottom: 3px; }
+        .tab-item.active { color: var(--primary); }
+        .cart-badge { position: absolute; top: -5px; right: 25%; background: var(--primary); color: white; border-radius: 50%; width: 18px; height: 18px; font-size: 10px; display: flex; align-items: center; justify-content: center; font-weight: bold; }
 
-        #footer-cart { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 92%; max-width: 500px; background: var(--primary); color: white; padding: 15px 20px; border-radius: 12px; display: none; justify-content: space-between; font-weight: 600; box-shadow: 0 10px 25px rgba(234, 29, 44, 0.3); z-index: 1000; cursor: pointer; }
-
+        /* CHECKOUT */
         #checkout-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 2500; display: none; overflow-y: auto; padding: 20px; }
-        .loader-container { display: none; text-align: center; padding: 40px 0; }
-        .loader { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto 15px; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .input-checkout { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 12px; }
 
-        .input-checkout { width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #ddd; margin-bottom: 12px; font-size: 14px; }
-        .checkout-item { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 5px; }
-        .total-row { border-top: 1px solid #eee; margin-top: 10px; padding-top: 10px; font-weight: 700; }
+        /* LOADER */
+        .loader-container { display: none; text-align: center; padding: 40px 0; }
+        .loader { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
     <div id="area-admin" class="area-admin">
-        <button class="btn-adm" style="background:#27ae60; color:white" onclick="novoProduto()">+ PRODUTO</button>
-        <button class="btn-adm" style="background:#3498db; color:white" onclick="novaCategoria()">+ CATEGORIA</button>
-        <button class="btn-adm" style="background:white; color:#333" onclick="salvarTudo()">💾 SALVAR NO BANCO</button>
+        <div class="admin-section">
+            <p>Horário: <input type="time" id="h-abre"> até <input type="time" id="h-fecha"> 
+            <button class="btn-adm" onclick="salvarTudo()">Salvar Horário</button></p>
+        </div>
+        <div id="edit-categorias-list" class="admin-section"></div>
+        <button class="btn-adm" style="background:var(--success); color:white" onclick="novoProduto()">+ NOVO PRODUTO</button>
+        <button class="btn-adm" style="background:#3498db; color:white" onclick="novaCategoria()">+ NOVA CATEGORIA</button>
+        <button class="btn-adm" style="background:white" onclick="salvarTudo()">💾 SALVAR TUDO</button>
     </div>
 
     <header>
         <button class="user-btn" onclick="ativarAdmin()"><i class="fa fa-user-circle"></i></button>
         <img id="loja-logo" src="" onclick="trocarLogo()">
         <h1 id="nome-loja">Carregando...</h1>
+        <div id="loja-status" class="status-badge">Verificando...</div>
     </header>
 
     <div class="categorias-nav" id="cat-nav"></div>
+
     <main class="container" id="corpo"></main>
 
-    <div id="footer-cart" onclick="abrirCheckout()">
-        <span><i class="fa fa-shopping-bag"></i> Ver sacola (<span id="cart-count">0</span>)</span>
-        <span id="cart-total">R$ 0,00</span>
-    </div>
+    <nav class="tab-bar">
+        <button class="tab-item active" onclick="window.scrollTo(0,0)">
+            <i class="fa fa-home"></i>Início
+        </button>
+        <button class="tab-item" onclick="abrirCheckout()">
+            <i class="fa fa-shopping-cart"></i>Carrinho
+            <div class="cart-badge" id="cart-count">0</div>
+        </button>
+        <button class="tab-item" onclick="alert('Histórico de pedidos em breve!')">
+            <i class="fa fa-list-alt"></i>Pedidos
+        </button>
+    </nav>
 
     <div id="checkout-screen">
-        <div id="checkout-form-content">
-            <h2 style="margin-bottom:20px;">Finalizar Pedido</h2>
+        <div id="checkout-content">
+            <h2 style="margin-bottom:20px;">Meu Carrinho</h2>
+            <div id="lista-carrinho" style="margin-bottom:20px;"></div>
             
-            <div style="background:#fff; border:1px solid #eee; padding:15px; border-radius:12px; margin-bottom:20px">
-                <input type="text" id="cli-nome" class="input-checkout" placeholder="Seu nome completo">
-                
-                <label style="font-size:12px; font-weight:bold; color:#888">CIDADE:</label>
-                <select id="cli-cidade" class="input-checkout">
-                    <option value="Jaraguá do Sul">Jaraguá do Sul</option>
-                    <option value="Guaramirim">Guaramirim</option>
-                    <option value="Schroeder">Schroeder</option>
-                </select>
+            <input type="text" id="cli-nome" class="input-checkout" placeholder="Seu nome">
+            <select id="cli-cidade" class="input-checkout">
+                <option value="Jaraguá do Sul">Jaraguá do Sul</option>
+                <option value="Guaramirim">Guaramirim</option>
+                <option value="Schroeder">Schroeder</option>
+            </select>
+            <input type="text" id="cli-rua" class="input-checkout" placeholder="Rua e número">
+            <input type="text" id="cli-bairro" class="input-checkout" placeholder="Bairro">
+            <select id="cli-pagamento" class="input-checkout">
+                <option value="Dinheiro">Dinheiro</option>
+                <option value="PIX">PIX</option>
+                <option value="Cartão">Cartão</option>
+            </select>
+            <textarea id="cli-obs" class="input-checkout" placeholder="Observações..." style="height:80px"></textarea>
 
-                <input type="text" id="cli-rua" class="input-checkout" placeholder="Rua e número">
-                <input type="text" id="cli-bairro" class="input-checkout" placeholder="Bairro">
-                <input type="text" id="cli-ref" class="input-checkout" placeholder="Ponto de referência">
-                
-                <select id="cli-pagamento" class="input-checkout">
-                    <option value="Dinheiro">Dinheiro</option>
-                    <option value="PIX">PIX</option>
-                    <option value="Cartão">Cartão de Crédito/Débito</option>
-                </select>
-                <textarea id="cli-obs" class="input-checkout" placeholder="Observações (ex: sem cebola)" style="height:80px"></textarea>
-            </div>
-
-            <button onclick="calcularETaxa()" style="width:100%; background:var(--dark); color:white; padding:18px; border:none; border-radius:12px; font-weight:bold; cursor:pointer">
-                CALCULAR TOTAL E FRETE
+            <button onclick="finalizarPedido()" id="btn-finalizar" style="width:100%; background:var(--primary); color:white; padding:18px; border:none; border-radius:12px; font-weight:bold;">
+                CALCULAR E ENVIAR
             </button>
+            <button onclick="document.getElementById('checkout-screen').style.display='none'" style="width:100%; margin-top:10px; border:none; background:none; color:var(--gray)">Voltar</button>
         </div>
 
         <div id="loading-checkout" class="loader-container">
             <div class="loader"></div>
-            <p>Calculando taxa de entrega para sua região...</p>
+            <p style="margin-top:15px">Calculando rota e frete...</p>
         </div>
-
-        <div id="resumo-final" style="display:none; margin-top:20px; background:#f9f9f9; padding:20px; border-radius:12px">
-            <h3 style="margin-bottom:15px">Resumo do Pedido</h3>
-            <div id="lista-itens-resumo"></div>
-            <div class="checkout-item total-row">
-                <span>Subtotal:</span> <span id="res-subtotal"></span>
-            </div>
-            <div class="checkout-item">
-                <span>Taxa de Entrega:</span> <span id="res-taxa" style="color:var(--success)"></span>
-            </div>
-            <div class="checkout-item total-row" style="font-size:18px; color:var(--primary)">
-                <span>Total Geral:</span> <span id="res-total-geral"></span>
-            </div>
-            
-            <button onclick="enviarWhatsApp()" style="width:100%; background:var(--success); color:white; padding:18px; border:none; border-radius:12px; font-weight:bold; margin-top:20px; cursor:pointer">
-                <i class="fa-brands fa-whatsapp"></i> ENVIAR PEDIDO
-            </button>
-        </div>
-
-        <button onclick="document.getElementById('checkout-screen').style.display='none'" style="width:100%; margin-top:15px; border:none; background:none; color:#888; font-weight:600">Voltar</button>
     </div>
 
     <script>
@@ -140,123 +136,164 @@
         };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
-
         const LOJA_ID = new URLSearchParams(window.location.search).get('loja');
+        
         let dadosLoja = null;
         let modoEdicao = false;
         let carrinho = [];
-        let taxaEntrega = 0;
 
         async function init() {
             db.ref(`lojas/${LOJA_ID}`).on('value', snap => {
                 dadosLoja = snap.val();
-                render();
+                if(dadosLoja) {
+                    verificarHorario();
+                    render();
+                }
             });
+        }
+
+        function verificarHorario() {
+            const agora = new Date();
+            const horaAtual = agora.getHours() + ":" + agora.getMinutes().toString().padStart(2, '0');
+            const abre = dadosLoja.config.horarioAbre || "06:00";
+            const fecha = dadosLoja.config.horarioFecha || "22:30";
+
+            const statusEl = document.getElementById('loja-status');
+            if (horaAtual >= abre && horaAtual <= fecha) {
+                statusEl.innerText = "● Aberto Agora";
+                statusEl.className = "status-badge open";
+                return true;
+            } else {
+                statusEl.innerText = "○ Fechado no Momento";
+                statusEl.className = "status-badge closed";
+                return false;
+            }
         }
 
         function render() {
             document.getElementById('nome-loja').innerText = dadosLoja.config.nomeLoja;
             document.getElementById('loja-logo').src = dadosLoja.config.logo;
-            
+            document.getElementById('h-abre').value = dadosLoja.config.horarioAbre || "06:00";
+            document.getElementById('h-fecha').value = dadosLoja.config.horarioFecha || "22:30";
+
             const corpo = document.getElementById('corpo');
             const nav = document.getElementById('cat-nav');
-            corpo.innerHTML = ""; nav.innerHTML = "";
+            const catAdmin = document.getElementById('edit-categorias-list');
+            corpo.innerHTML = ""; nav.innerHTML = ""; catAdmin.innerHTML = "";
 
             const produtos = dadosLoja.produtos || [];
             const categorias = [...new Set(produtos.map(p => p.categoria || "Geral"))];
 
+            // Render Categorias Admin
             categorias.forEach(cat => {
+                catAdmin.innerHTML += `
+                    <div class="cat-edit-row">
+                        <input type="text" value="${cat}" onchange="renomearCategoria('${cat}', this.value)" style="flex:1; padding:5px">
+                        <button onclick="removerCategoria('${cat}')" style="color:red; background:none; border:none">✖</button>
+                    </div>
+                `;
+
                 nav.innerHTML += `<a href="#${cat}" class="cat-item">${cat}</a>`;
                 corpo.innerHTML += `<div class="section-title" id="${cat}">${cat}</div>`;
 
-                produtos.forEach((p, i) => {
-                    if((p.categoria || "Geral") === cat) {
-                        corpo.innerHTML += `
-                            <div class="card-produto" onclick="${modoEdicao ? '' : `addCarrinho(${i})`}">
-                                <div class="prod-info">
-                                    <h3 contenteditable="${modoEdicao}" onblur="updateLocal(${i},'title',this.innerText)">${p.title}</h3>
-                                    <p contenteditable="${modoEdicao}" onblur="updateLocal(${i},'ingredientes',this.innerText)">${p.ingredientes}</p>
-                                    <div class="prod-price">R$ <span contenteditable="${modoEdicao}" onblur="updateLocal(${i},'price',this.innerText)">${p.price}</span></div>
-                                    <div class="admin-box ${modoEdicao?'show-admin':''}">
-                                        <input type="text" value="${p.image}" onchange="updateLocal(${i},'image',this.value)" placeholder="URL da Foto">
-                                        <select onchange="updateLocal(${i},'categoria',this.value)">
-                                            ${categorias.map(c => `<option value="${c}" ${c===cat?'selected':''}>${c}</option>`).join('')}
-                                        </select>
-                                        <button onclick="remover(${i})" style="color:red; background:none; border:none; margin-top:5px; font-size:10px">Remover</button>
-                                    </div>
+                produtos.filter(p => p.categoria === cat).forEach((p, i) => {
+                    const originalIndex = produtos.indexOf(p);
+                    corpo.innerHTML += `
+                        <div class="card-produto" onclick="tentarAddCarrinho(${originalIndex})">
+                            <div class="prod-info">
+                                <h3 contenteditable="${modoEdicao}" onblur="updateLocal(${originalIndex},'title',this.innerText)">${p.title}</h3>
+                                <p contenteditable="${modoEdicao}" onblur="updateLocal(${originalIndex},'ingredientes',this.innerText)">${p.ingredientes}</p>
+                                <b style="color:var(--success)">R$ <span contenteditable="${modoEdicao}" onblur="updateLocal(${originalIndex},'price',this.innerText)">${p.price}</span></b>
+                                <div class="admin-box ${modoEdicao?'show-admin':''}">
+                                    <input type="text" value="${p.image}" onchange="updateLocal(${originalIndex},'image',this.value)">
+                                    <button onclick="removerItem(${originalIndex})" style="color:red; border:none; background:none">Excluir Produto</button>
                                 </div>
-                                <div class="prod-img"><img src="${p.image}"></div>
                             </div>
-                        `;
-                    }
+                            <div class="prod-img"><img src="${p.image}"></div>
+                        </div>
+                    `;
                 });
             });
         }
 
-        function addCarrinho(i) {
-            carrinho.push(dadosLoja.produtos[i]);
-            const total = carrinho.reduce((sum, item) => sum + parseFloat(item.price), 0);
-            document.getElementById('footer-cart').style.display = 'flex';
+        function tentarAddCarrinho(idx) {
+            if(modoEdicao) return;
+            if(!verificarHorario()) return alert("Desculpe, a loja está fechada!");
+            carrinho.push(dadosLoja.produtos[idx]);
             document.getElementById('cart-count').innerText = carrinho.length;
-            document.getElementById('cart-total').innerText = `R$ ${total.toFixed(2)}`;
+            alert(`${dadosLoja.produtos[idx].title} no carrinho!`);
         }
 
         function abrirCheckout() {
+            if(carrinho.length === 0) return alert("Seu carrinho está vazio!");
             document.getElementById('checkout-screen').style.display = 'block';
-            document.getElementById('resumo-final').style.display = 'none';
-            document.getElementById('checkout-form-content').style.display = 'block';
+            const lista = document.getElementById('lista-carrinho');
+            lista.innerHTML = carrinho.map((p, i) => `
+                <div style="display:flex; justify-content:space-between; margin-bottom:10px; border-bottom:1px solid #eee; padding-bottom:5px">
+                    <span>${p.title}</span>
+                    <b>R$ ${p.price} <button onclick="removerDoCarrinho(${i})" style="color:red; border:none; background:none">✖</button></b>
+                </div>
+            `).join('');
         }
 
-        function calcularETaxa() {
-            if(!document.getElementById('cli-rua').value) return alert("Preencha o endereço!");
-            
-            document.getElementById('checkout-form-content').style.display = 'none';
-            document.getElementById('loading-checkout').style.display = 'block';
+        function removerDoCarrinho(i) {
+            carrinho.splice(i, 1);
+            document.getElementById('cart-count').innerText = carrinho.length;
+            if(carrinho.length === 0) document.getElementById('checkout-screen').style.display = 'none';
+            else abrirCheckout();
+        }
 
+        function finalizarPedido() {
+            document.getElementById('checkout-content').style.display = 'none';
+            document.getElementById('loading-checkout').style.display = 'block';
+            
             setTimeout(() => {
-                document.getElementById('loading-checkout').style.display = 'none';
-                document.getElementById('resumo-final').style.display = 'block';
-                
-                // Lógica de taxa por cidade
+                const subtotal = carrinho.reduce((a, b) => a + parseFloat(b.price), 0);
                 const cidade = document.getElementById('cli-cidade').value;
-                if(cidade === "Guaramirim") taxaEntrega = 5.00;
-                else if(cidade === "Jaraguá do Sul") taxaEntrega = 10.00;
-                else taxaEntrega = 12.00; // Schroeder
+                const taxa = cidade === "Guaramirim" ? 5 : (cidade === "Jaraguá do Sul" ? 10 : 12);
                 
-                const subtotal = carrinho.reduce((sum, item) => sum + parseFloat(item.price), 0);
-                document.getElementById('lista-itens-resumo').innerHTML = carrinho.map(i => `
-                    <div class="checkout-item"><span>1x ${i.title}</span><span>R$ ${i.price}</span></div>
-                `).join('');
+                const msg = `*NOVO PEDIDO*\nCliente: ${document.getElementById('cli-nome').value}\nCidade: ${cidade}\nEndereço: ${document.getElementById('cli-rua').value}\nPagamento: ${document.getElementById('cli-pagamento').value}\n---\nItens:\n${carrinho.map(p => "- " + p.title).join('\n')}\n---\nTotal: R$ ${(subtotal + taxa).toFixed(2)}`;
                 
-                document.getElementById('res-subtotal').innerText = `R$ ${subtotal.toFixed(2)}`;
-                document.getElementById('res-taxa').innerText = `R$ ${taxaEntrega.toFixed(2)}`;
-                document.getElementById('res-total-geral').innerText = `R$ ${(subtotal + taxaEntrega).toFixed(2)}`;
+                window.open(`https://wa.me/55${dadosLoja.config.whatsapp}?text=${encodeURIComponent(msg)}`);
+                location.reload();
             }, 2000);
         }
 
-        function enviarWhatsApp() {
-            const subtotal = carrinho.reduce((sum, item) => sum + parseFloat(item.price), 0);
-            const cidade = document.getElementById('cli-cidade').value;
-            const msg = `*NOVO PEDIDO - ${dadosLoja.config.nomeLoja}*%0A` +
-                `*Cliente:* ${document.getElementById('cli-nome').value}%0A` +
-                `*Cidade:* ${cidade}%0A` +
-                `*Endereço:* ${document.getElementById('cli-rua').value}, ${document.getElementById('cli-bairro').value}%0A` +
-                `*Pagamento:* ${document.getElementById('cli-pagamento').value}%0A%0A` +
-                `*Itens:*%0A${carrinho.map(i => `- ${i.title}`).join('%0A')}%0A%0A` +
-                `*Subtotal:* R$ ${subtotal.toFixed(2)}%0A` +
-                `*Taxa:* R$ ${taxaEntrega.toFixed(2)}%0A` +
-                `*TOTAL:* R$ ${(subtotal + taxaEntrega).toFixed(2)}`;
-            
-            window.open(`https://wa.me/55${dadosLoja.config.whatsapp}?text=${msg}`);
+        // FUNÇÕES ADMIN
+        function ativarAdmin() {
+            const p = prompt("Senha:");
+            if(p === dadosLoja.config.senhaAdmin) {
+                modoEdicao = true;
+                document.getElementById('area-admin').style.display = 'block';
+                render();
+            }
         }
 
-        function ativarAdmin() { if(prompt("Senha:") === dadosLoja.config.senhaAdmin) { modoEdicao = true; document.getElementById('area-admin').style.display = 'block'; render(); } }
-        async function salvarTudo() { await db.ref(`lojas/${LOJA_ID}`).set(dadosLoja); alert("Salvo!"); location.reload(); }
-        function updateLocal(i, c, v) { dadosLoja.produtos[i][c] = v; if(c==='image') render(); }
+        function renomearCategoria(antiga, nova) {
+            dadosLoja.produtos.forEach(p => { if(p.categoria === antiga) p.categoria = nova; });
+            render();
+        }
+
+        function removerCategoria(cat) {
+            if(confirm("Excluir categoria e todos os produtos nela?")) {
+                dadosLoja.produtos = dadosLoja.produtos.filter(p => p.categoria !== cat);
+                render();
+            }
+        }
+
+        function updateLocal(i, c, v) { dadosLoja.produtos[i][c] = v; }
         function novoProduto() { dadosLoja.produtos.push({title:"Novo", price:"0.00", categoria:"Geral", image:"https://via.placeholder.com/150"}); render(); }
-        function novaCategoria() { const n = prompt("Nome:"); if(n) { dadosLoja.produtos.push({title:"Novo", price:"0.00", categoria:n, image:"https://via.placeholder.com/150"}); render(); } }
-        function remover(i) { dadosLoja.produtos.splice(i,1); render(); }
-        function trocarLogo() { if(modoEdicao) { const l = prompt("Link Logo:"); if(l) { dadosLoja.config.logo = l; render(); } } }
+        function novaCategoria() { const n = prompt("Nome:"); if(n) { dadosLoja.produtos.push({title:"Exemplo", price:"0.00", categoria:n, image:"https://via.placeholder.com/150"}); render(); } }
+        function removerItem(i) { dadosLoja.produtos.splice(i, 1); render(); }
+        function trocarLogo() { if(modoEdicao) { const l = prompt("URL Logo:"); if(l) { dadosLoja.config.logo = l; render(); } } }
+
+        async function salvarTudo() {
+            dadosLoja.config.horarioAbre = document.getElementById('h-abre').value;
+            dadosLoja.config.horarioFecha = document.getElementById('h-fecha').value;
+            await db.ref(`lojas/${LOJA_ID}`).set(dadosLoja);
+            alert("✅ Tudo salvo!");
+            location.reload();
+        }
 
         window.onload = init;
     </script>
