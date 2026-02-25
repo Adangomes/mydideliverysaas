@@ -2,149 +2,204 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <title>Painel Mestre -  SaaS</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Master - SaaS</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
     <style>
-        body { font-family: 'Poppins', sans-serif; background: #2c3e50; color: white; padding: 20px; }
-        .box { background: white; color: #333; padding: 30px; border-radius: 15px; max-width: 500px; margin: auto; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-        h2 { text-align: center; margin-bottom: 20px; color: #2c3e50; }
-        label { font-size: 0.8rem; font-weight: bold; color: #666; }
-        input { width: 100%; padding: 10px; margin: 5px 0 15px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
-        .btn-group { display: flex; gap: 10px; }
-        button { flex: 1; padding: 12px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        .btn-save { background: #27ae60; color: white; }
-        .btn-search { background: #3498db; color: white; }
-        .btn-delete { background: #e74c3c; color: white; margin-top: 10px; width: 100%; }
-        button:hover { opacity: 0.8; }
-        hr { border: 0; border-top: 1px solid #eee; margin: 20px 0; }
+        :root { --primary: #2c3e50; --success: #27ae60; --danger: #e74c3c; --info: #3498db; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        
+        body { background: #f4f7f6; color: #333; padding: 10px; padding-bottom: 50px; }
+        .container { max-width: 800px; margin: auto; }
+        
+        h2 { text-align: center; margin: 20px 0; color: var(--primary); font-size: 1.5rem; }
+        
+        /* Card de Formulário */
+        .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        .grid-form { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        @media (max-width: 600px) { .grid-form { grid-template-columns: 1fr; } }
+
+        label { font-size: 0.75rem; font-weight: bold; color: #666; display: block; margin-top: 10px; }
+        input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; margin-top: 5px; font-size: 1rem; }
+        
+        .btn { width: 100%; padding: 15px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; color: white; transition: 0.3s; margin-top: 15px; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .btn-save { background: var(--success); }
+        .btn-delete { background: var(--danger); margin-top: 10px; }
+        .btn-clear { background: #95a5a6; }
+
+        /* Lista de Restaurantes */
+        .lista-lojas { background: white; border-radius: 15px; padding: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .loja-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #eee; }
+        .loja-item:last-child { border: none; }
+        .loja-info b { display: block; color: var(--primary); }
+        .loja-info span { font-size: 0.8rem; color: #888; }
+        .actions-list { display: flex; gap: 10px; }
+        .btn-mini { padding: 8px; border-radius: 5px; border: none; cursor: pointer; color: white; }
     </style>
 </head>
 <body>
 
-    <div class="box">
-        <h2>Gestão de Restaurantes</h2>
+<div class="container">
+    <h2><i class="fa fa-gears"></i> Painel Administrativo</h2>
+
+    <div class="card">
+        <div id="form-title" style="font-weight: bold; margin-bottom: 10px; color: var(--info);">Novo Cadastro / Edição</div>
         
-        <label>ID da Loja (ex: snoop_lanche)</label>
-        <div style="display: flex; gap: 5px;">
-            <input type="text" id="id" placeholder="Digite o ID para Criar ou Buscar">
-            <button class="btn-search" onclick="buscarLoja()" style="flex: 0; white-space: nowrap; padding: 0 20px; margin-bottom: 15px;">Buscar</button>
-        </div>
+        <label>ID Único da URL (ex: snoop_lanche)</label>
+        <input type="text" id="id" placeholder="id_sem_espacos">
 
-        <hr>
-
-        <label>Nome do Restaurante:</label>
-        <input type="text" id="nome">
-
-        <label>WhatsApp (55...):</label>
-        <input type="text" id="zap">
-
-        <label>Endereço Completo (Rua, Nº, Bairro):</label>
-        <input type="text" id="rua">
-
-        <div style="display: flex; gap: 10px;">
-            <div style="flex: 1;">
-                <label>Latitude:</label>
-                <input type="text" id="lat">
+        <div class="grid-form">
+            <div>
+                <label>Nome do Restaurante</label>
+                <input type="text" id="nome" placeholder="Ex: Snoop Lanche">
             </div>
-            <div style="flex: 1;">
-                <label>Longitude:</label>
-                <input type="text" id="lon">
+            <div>
+                <label>WhatsApp (DDD + Número)</label>
+                <input type="text" id="zap" placeholder="5547992745867">
             </div>
         </div>
 
-        <label>Valor por KM (Frete):</label>
-        <input type="text" id="km">
+        <label>Endereço Completo</label>
+        <input type="text" id="rua" placeholder="Rua, Número, Bairro, Cidade">
 
-        <label>Senha do Dono:</label>
-        <input type="text" id="pass">
-
-        <div class="btn-group">
-            <button class="btn-save" onclick="salvarLoja()">SALVAR / ATUALIZAR</button>
+        <div class="grid-form">
+            <div>
+                <label>Latitude (Restaurante)</label>
+                <input type="text" id="lat" placeholder="-26.4842">
+            </div>
+            <div>
+                <label>Longitude (Restaurante)</label>
+                <input type="text" id="lon" placeholder="-49.0843">
+            </div>
         </div>
-        
-        <button class="btn-delete" onclick="excluirLoja()">EXCLUIR RESTAURANTE PERMANENTEMENTE</button>
+
+        <div class="grid-form">
+            <div>
+                <label>R$ por KM (Frete)</label>
+                <input type="text" id="km" placeholder="1.50">
+            </div>
+            <div>
+                <label>Senha de Acesso do Dono</label>
+                <input type="text" id="pass" placeholder="Senha123">
+            </div>
+        </div>
+
+        <button class="btn btn-save" onclick="salvarLoja()"><i class="fa fa-save"></i> SALVAR ALTERAÇÕES</button>
+        <button class="btn btn-clear" onclick="limparCampos()">LIMPAR CAMPOS</button>
     </div>
 
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
-    <script>
-        const firebaseConfig = {
-            apiKey: "AIzaSyCXA1yP1F-riNkzOX5zJs5gsQ82EzsT7Qg",
-            authDomain: "myproject26-10f0e.firebaseapp.com",
-            databaseURL: "https://myproject26-10f0e-default-rtdb.firebaseio.com",
-            projectId: "myproject26-10f0e",
-            storageBucket: "myproject26-10f0e.firebasestorage.app",
-            messagingSenderId: "884850608032",
-            appId: "1:884850608032:web:79db6983346c3c20edc6c5"
-        };
-        firebase.initializeApp(firebaseConfig);
-        const db = firebase.database();
+    <div class="lista-lojas">
+        <h3 style="margin-bottom: 15px; font-size: 1rem;"><i class="fa fa-list"></i> Restaurantes Ativos</h3>
+        <div id="render-lista">
+            <p style="text-align: center; color: #999;">Carregando lojas...</p>
+        </div>
+    </div>
+</div>
 
-        // BUSCAR LOJA EXISTENTE
-        async function buscarLoja() {
-            const id = document.getElementById('id').value.toLowerCase().trim();
-            if(!id) return alert("Digite o ID da loja para buscar.");
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
 
-            const snap = await db.ref(`lojas/${id}`).once('value');
-            const dados = snap.val();
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyCXA1yP1F-riNkzOX5zJs5gsQ82EzsT7Qg",
+        authDomain: "myproject26-10f0e.firebaseapp.com",
+        databaseURL: "https://myproject26-10f0e-default-rtdb.firebaseio.com",
+        projectId: "myproject26-10f0e",
+        storageBucket: "myproject26-10f0e.firebasestorage.app",
+        messagingSenderId: "884850608032",
+        appId: "1:884850608032:web:79db6983346c3c20edc6c5"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
 
-            if(dados) {
-                document.getElementById('nome').value = dados.config.nomeLoja;
-                document.getElementById('zap').value = dados.config.whatsapp;
-                document.getElementById('rua').value = dados.config.rua;
-                document.getElementById('lat').value = dados.config.lat;
-                document.getElementById('lon').value = dados.config.lon;
-                document.getElementById('km').value = dados.config.valorKm;
-                document.getElementById('pass').value = dados.config.senhaAdmin;
-                alert("Dados carregados! Agora você pode editar e salvar.");
-            } else {
-                alert("Loja não encontrada. Você pode preencher os campos para criar uma nova com este ID.");
-            }
-        }
-
-        // SALVAR OU ATUALIZAR
-        async function salvarLoja() {
-            const id = document.getElementById('id').value.toLowerCase().trim();
-            if(!id) return alert("O ID é obrigatório.");
-
-            // Pegamos o que já existe para não apagar o cardápio (produtos) ao atualizar as configs
-            const snap = await db.ref(`lojas/${id}`).once('value');
-            const lojaExistente = snap.val();
-            const produtosAtuais = lojaExistente ? lojaExistente.produtos : [{title: "Produto Inicial", ingredientes: "Descrição...", price: 0.00, image: "https://via.placeholder.com/150"}];
-            const logoAtual = lojaExistente ? lojaExistente.config.logo : "https://via.placeholder.com/150";
-
-            const dados = {
-                config: {
-                    nomeLoja: document.getElementById('nome').value,
-                    whatsapp: document.getElementById('zap').value,
-                    rua: document.getElementById('rua').value,
-                    lat: document.getElementById('lat').value,
-                    lon: document.getElementById('lon').value,
-                    valorKm: parseFloat(document.getElementById('km').value) || 0,
-                    senhaAdmin: document.getElementById('pass').value,
-                    logo: logoAtual
-                },
-                produtos: produtosAtuais
-            };
-
-            await db.ref(`lojas/${id}`).set(dados);
-            alert("Sucesso! Loja criada ou atualizada no Firebase.");
-        }
-
-        // EXCLUIR DEFINITIVAMENTE
-        async function excluirLoja() {
-            const id = document.getElementById('id').value.toLowerCase().trim();
-            if(!id) return alert("Digite o ID da loja que deseja excluir.");
-
-            const confirmacao = confirm(`TEM CERTEZA? Isso vai apagar o restaurante "${id}" e todos os produtos dele do Firebase para sempre!`);
+    // Carregar Lista automaticamente
+    function listarLojas() {
+        db.ref('lojas').on('value', (snap) => {
+            const listaDiv = document.getElementById('render-lista');
+            listaDiv.innerHTML = "";
+            const lojas = snap.val();
             
-            if(confirmacao) {
-                await db.ref(`lojas/${id}`).remove();
-                alert("Restaurante removido com sucesso!");
-                // Limpa os campos
-                document.querySelectorAll('input').forEach(i => i.value = "");
+            if(!lojas) {
+                listaDiv.innerHTML = "<p>Nenhuma loja cadastrada.</p>";
+                return;
             }
+
+            for(let id in lojas) {
+                const l = lojas[id].config;
+                listaDiv.innerHTML += `
+                    <div class="loja-item">
+                        <div class="loja-info">
+                            <b>${l.nomeLoja}</b>
+                            <span>ID: ${id}</span>
+                        </div>
+                        <div class="actions-list">
+                            <button class="btn-mini" style="background:var(--info)" onclick="carregarParaEditar('${id}')"><i class="fa fa-edit"></i></button>
+                            <button class="btn-mini" style="background:var(--danger)" onclick="excluirLoja('${id}')"><i class="fa fa-trash"></i></button>
+                        </div>
+                    </div>
+                `;
+            }
+        });
+    }
+
+    async function salvarLoja() {
+        const id = document.getElementById('id').value.toLowerCase().replace(/\s/g, '_').trim();
+        if(!id) return alert("O ID é obrigatório!");
+
+        // Verifica se a loja já existe para manter os produtos
+        const snap = await db.ref(`lojas/${id}`).once('value');
+        const existe = snap.val();
+        
+        const payload = {
+            config: {
+                nomeLoja: document.getElementById('nome').value,
+                whatsapp: document.getElementById('zap').value,
+                rua: document.getElementById('rua').value,
+                lat: document.getElementById('lat').value,
+                lon: document.getElementById('lon').value,
+                valorKm: parseFloat(document.getElementById('km').value) || 0,
+                senhaAdmin: document.getElementById('pass').value,
+                logo: existe ? existe.config.logo : "https://via.placeholder.com/150"
+            },
+            produtos: existe ? existe.produtos : [{title: "Produto Exemplo", ingredientes: "Edite aqui", price: 0, image: "https://via.placeholder.com/150"}]
+        };
+
+        await db.ref(`lojas/${id}`).update(payload);
+        alert("Loja Salva/Atualizada com Sucesso!");
+        limparCampos();
+    }
+
+    async function carregarParaEditar(id) {
+        const snap = await db.ref(`lojas/${id}`).once('value');
+        const l = snap.val();
+        document.getElementById('id').value = id;
+        document.getElementById('nome').value = l.config.nomeLoja;
+        document.getElementById('zap').value = l.config.whatsapp;
+        document.getElementById('rua').value = l.config.rua;
+        document.getElementById('lat').value = l.config.lat;
+        document.getElementById('lon').value = l.config.lon;
+        document.getElementById('km').value = l.config.valorKm;
+        document.getElementById('pass').value = l.config.senhaAdmin;
+        window.scrollTo(0,0);
+        document.getElementById('form-title').innerText = "Editando: " + l.config.nomeLoja;
+    }
+
+    async function excluirLoja(id) {
+        if(confirm(`ATENÇÃO ADEMIR: Você quer excluir permanentemente o restaurante ${id}? Isso apagará tudo e o link deixará de funcionar!`)) {
+            await db.ref(`lojas/${id}`).remove();
+            alert("Restaurante removido do sistema!");
         }
-    </script>
+    }
+
+    function limparCampos() {
+        document.querySelectorAll('input').forEach(i => i.value = "");
+        document.getElementById('form-title').innerText = "Novo Cadastro / Edição";
+    }
+
+    window.onload = listarLojas;
+</script>
+
 </body>
 </html>
