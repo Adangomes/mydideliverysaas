@@ -3,98 +3,64 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel Master - SaaS</title>
+    <title>Painel Administrativo - Gestão e Cobrança</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
     <style>
-        :root { --primary: #2c3e50; --success: #27ae60; --danger: #e74c3c; --info: #3498db; }
+        :root { --primary: #2c3e50; --success: #27ae60; --danger: #e74c3c; --info: #3498db; --warning: #f39c12; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        
         body { background: #f4f7f6; color: #333; padding: 10px; padding-bottom: 50px; }
-        .container { max-width: 800px; margin: auto; }
-        
+        .container { max-width: 850px; margin: auto; }
         h2 { text-align: center; margin: 20px 0; color: var(--primary); font-size: 1.5rem; }
-        
-        /* Card de Formulário */
         .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); margin-bottom: 20px; }
         .grid-form { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
         @media (max-width: 600px) { .grid-form { grid-template-columns: 1fr; } }
-
         label { font-size: 0.75rem; font-weight: bold; color: #666; display: block; margin-top: 10px; }
         input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; margin-top: 5px; font-size: 1rem; }
-        
         .btn { width: 100%; padding: 15px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; color: white; transition: 0.3s; margin-top: 15px; display: flex; align-items: center; justify-content: center; gap: 10px; }
         .btn-save { background: var(--success); }
-        .btn-delete { background: var(--danger); margin-top: 10px; }
         .btn-clear { background: #95a5a6; }
-
-        /* Lista de Restaurantes */
         .lista-lojas { background: white; border-radius: 15px; padding: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
-        .loja-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; border-bottom: 1px solid #eee; }
-        .loja-item:last-child { border: none; }
-        .loja-info b { display: block; color: var(--primary); }
-        .loja-info span { font-size: 0.8rem; color: #888; }
-        .actions-list { display: flex; gap: 10px; }
-        .btn-mini { padding: 8px; border-radius: 5px; border: none; cursor: pointer; color: white; }
+        .loja-item { border-bottom: 1px solid #eee; padding: 15px 0; }
+        .loja-header { display: flex; justify-content: space-between; align-items: center; }
+        .loja-info b { color: var(--primary); font-size: 1.1rem; }
+        .resumo-financeiro { background: #f9f9f9; padding: 15px; border-radius: 10px; margin-top: 10px; display: none; border-left: 5px solid var(--info); }
+        .financeiro-item { display: flex; justify-content: space-between; margin-bottom: 5px; font-size: 0.9rem; }
+        .total-cobrar { font-weight: bold; color: var(--danger); font-size: 1rem; border-top: 1px solid #ddd; pt: 5px; }
+        .btn-mini { padding: 8px 12px; border-radius: 5px; border: none; cursor: pointer; color: white; font-size: 0.8rem; }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2><i class="fa fa-gears"></i> Painel Administrativo</h2>
+    <h2><i class="fa fa-chart-line"></i> Gestão Master de Restaurantes</h2>
 
     <div class="card">
-        <div id="form-title" style="font-weight: bold; margin-bottom: 10px; color: var(--info);">Novo Cadastro / Edição</div>
-        
-        <label>ID Único da URL (ex: snoop_lanche)</label>
-        <input type="text" id="id" placeholder="id_sem_espacos">
-
+        <div id="form-title" style="font-weight: bold; margin-bottom: 10px; color: var(--info);">Novo Cadastro / Edição de Dados</div>
+        <label>ID da URL (ex: snoop_lanche)</label>
+        <input type="text" id="id" placeholder="identificador_da_loja">
         <div class="grid-form">
-            <div>
-                <label>Nome do Restaurante</label>
-                <input type="text" id="nome" placeholder="Ex: Snoop Lanche">
-            </div>
-            <div>
-                <label>WhatsApp (DDD + Número)</label>
-                <input type="text" id="zap" placeholder="5547992745867">
-            </div>
+            <div><label>Nome do Restaurante</label><input type="text" id="nome"></div>
+            <div><label>WhatsApp (55...)</label><input type="text" id="zap"></div>
         </div>
-
         <label>Endereço Completo</label>
-        <input type="text" id="rua" placeholder="Rua, Número, Bairro, Cidade">
-
+        <input type="text" id="rua">
         <div class="grid-form">
-            <div>
-                <label>Latitude (Restaurante)</label>
-                <input type="text" id="lat" placeholder="-26.4842">
-            </div>
-            <div>
-                <label>Longitude (Restaurante)</label>
-                <input type="text" id="lon" placeholder="-49.0843">
-            </div>
+            <div><label>Latitude</label><input type="text" id="lat"></div>
+            <div><label>Longitude</label><input type="text" id="lon"></div>
         </div>
-
         <div class="grid-form">
-            <div>
-                <label>R$ por KM (Frete)</label>
-                <input type="text" id="km" placeholder="1.50">
-            </div>
-            <div>
-                <label>Senha de Acesso do Dono</label>
-                <input type="text" id="pass" placeholder="Senha123">
-            </div>
+            <div><label>R$ por KM (Entrega)</label><input type="text" id="km"></div>
+            <div><label>Senha do Dono</label><input type="text" id="pass"></div>
         </div>
-
-        <button class="btn btn-save" onclick="salvarLoja()"><i class="fa fa-save"></i> SALVAR ALTERAÇÕES</button>
+        <button class="btn btn-save" onclick="salvarLoja()"><i class="fa fa-save"></i> SALVAR CONFIGURAÇÕES</button>
         <button class="btn btn-clear" onclick="limparCampos()">LIMPAR CAMPOS</button>
     </div>
 
     <div class="lista-lojas">
-        <h3 style="margin-bottom: 15px; font-size: 1rem;"><i class="fa fa-list"></i> Restaurantes Ativos</h3>
-        <div id="render-lista">
-            <p style="text-align: center; color: #999;">Carregando lojas...</p>
-        </div>
+        <h3 style="margin-bottom: 15px; font-size: 1rem;"><i class="fa fa-list"></i> Restaurantes Ativos e Vendas</h3>
+        <div id="render-lista"><p style="text-align: center; color: #999;">Carregando dados...</p></div>
     </div>
 </div>
 
@@ -114,29 +80,45 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // Carregar Lista automaticamente
     function listarLojas() {
         db.ref('lojas').on('value', (snap) => {
             const listaDiv = document.getElementById('render-lista');
             listaDiv.innerHTML = "";
             const lojas = snap.val();
-            
-            if(!lojas) {
-                listaDiv.innerHTML = "<p>Nenhuma loja cadastrada.</p>";
-                return;
-            }
+            if(!lojas) return listaDiv.innerHTML = "<p>Nenhum restaurante ativo.</p>";
 
             for(let id in lojas) {
-                const l = lojas[id].config;
+                const config = lojas[id].config;
+                const pedidos = lojas[id].pedidos || {};
+                
+                // Cálculo de Vendas (Filtrando pedidos finalizados no mês atual)
+                let totalVendasMes = 0;
+                for(let pId in pedidos) {
+                    const p = pedidos[pId];
+                    // Considera pedidos com subtotal (sem taxa de entrega)
+                    totalVendasMes += parseFloat(p.subtotal || 0);
+                }
+
+                const taxaSistema = totalVendasMes * 0.10; // Taxa de 10%
+
                 listaDiv.innerHTML += `
                     <div class="loja-item">
-                        <div class="loja-info">
-                            <b>${l.nomeLoja}</b>
-                            <span>ID: ${id}</span>
+                        <div class="loja-header">
+                            <div class="loja-info">
+                                <b>${config.nomeLoja}</b>
+                                <span style="font-size:0.7rem; color:#888;">ID: ${id}</span>
+                            </div>
+                            <div class="actions">
+                                <button class="btn-mini" style="background:var(--info)" onclick="toggleFinanceiro('${id}')"><i class="fa fa-dollar-sign"></i></button>
+                                <button class="btn-mini" style="background:var(--warning)" onclick="carregarParaEditar('${id}')"><i class="fa fa-edit"></i></button>
+                                <button class="btn-mini" style="background:var(--danger)" onclick="excluirLoja('${id}')"><i class="fa fa-trash"></i></button>
+                            </div>
                         </div>
-                        <div class="actions-list">
-                            <button class="btn-mini" style="background:var(--info)" onclick="carregarParaEditar('${id}')"><i class="fa fa-edit"></i></button>
-                            <button class="btn-mini" style="background:var(--danger)" onclick="excluirLoja('${id}')"><i class="fa fa-trash"></i></button>
+                        <div id="fin-${id}" class="resumo-financeiro">
+                            <div class="financeiro-item"><span>Total em Vendas (Produtos):</span> <b>R$ ${totalVendasMes.toFixed(2)}</b></div>
+                            <div class="financeiro-item"><span>Taxa do Sistema (10%):</span> <b>R$ ${taxaSistema.toFixed(2)}</b></div>
+                            <div class="financeiro-item" style="color:#888; font-size:0.7rem;">* Taxas de entrega do motoboy não inclusas no cálculo.</div>
+                            <div class="financeiro-item total-cobrar"><span>VALOR A COBRAR:</span> <span>R$ ${taxaSistema.toFixed(2)}</span></div>
                         </div>
                     </div>
                 `;
@@ -146,12 +128,9 @@
 
     async function salvarLoja() {
         const id = document.getElementById('id').value.toLowerCase().replace(/\s/g, '_').trim();
-        if(!id) return alert("O ID é obrigatório!");
-
-        // Verifica se a loja já existe para manter os produtos
+        if(!id) return alert("ID obrigatório!");
         const snap = await db.ref(`lojas/${id}`).once('value');
         const existe = snap.val();
-        
         const payload = {
             config: {
                 nomeLoja: document.getElementById('nome').value,
@@ -163,43 +142,44 @@
                 senhaAdmin: document.getElementById('pass').value,
                 logo: existe ? existe.config.logo : "https://via.placeholder.com/150"
             },
-            produtos: existe ? existe.produtos : [{title: "Produto Exemplo", ingredientes: "Edite aqui", price: 0, image: "https://via.placeholder.com/150"}]
+            produtos: existe ? existe.produtos : []
         };
-
         await db.ref(`lojas/${id}`).update(payload);
-        alert("Loja Salva/Atualizada com Sucesso!");
+        alert("Salvo com sucesso!");
         limparCampos();
+    }
+
+    async function excluirLoja(id) {
+        if(confirm(`EXCLUIR PERMANENTEMENTE? O restaurante ${id} e sua URL deixarão de existir agora!`)) {
+            await db.ref(`lojas/${id}`).remove();
+            alert("Restaurante e dados removidos do Firebase!");
+        }
+    }
+
+    function toggleFinanceiro(id) {
+        const div = document.getElementById(`fin-${id}`);
+        div.style.display = div.style.display === 'block' ? 'none' : 'block';
     }
 
     async function carregarParaEditar(id) {
         const snap = await db.ref(`lojas/${id}`).once('value');
-        const l = snap.val();
+        const l = snap.val().config;
         document.getElementById('id').value = id;
-        document.getElementById('nome').value = l.config.nomeLoja;
-        document.getElementById('zap').value = l.config.whatsapp;
-        document.getElementById('rua').value = l.config.rua;
-        document.getElementById('lat').value = l.config.lat;
-        document.getElementById('lon').value = l.config.lon;
-        document.getElementById('km').value = l.config.valorKm;
-        document.getElementById('pass').value = l.config.senhaAdmin;
+        document.getElementById('nome').value = l.nomeLoja;
+        document.getElementById('zap').value = l.whatsapp;
+        document.getElementById('rua').value = l.rua;
+        document.getElementById('lat').value = l.lat;
+        document.getElementById('lon').value = l.lon;
+        document.getElementById('km').value = l.valorKm;
+        document.getElementById('pass').value = l.senhaAdmin;
         window.scrollTo(0,0);
-        document.getElementById('form-title').innerText = "Editando: " + l.config.nomeLoja;
-    }
-
-    async function excluirLoja(id) {
-        if(confirm(`ATENÇÃO ADEMIR: Você quer excluir permanentemente o restaurante ${id}? Isso apagará tudo e o link deixará de funcionar!`)) {
-            await db.ref(`lojas/${id}`).remove();
-            alert("Restaurante removido do sistema!");
-        }
     }
 
     function limparCampos() {
         document.querySelectorAll('input').forEach(i => i.value = "");
-        document.getElementById('form-title').innerText = "Novo Cadastro / Edição";
     }
 
     window.onload = listarLojas;
 </script>
-
 </body>
 </html>
