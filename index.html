@@ -3,83 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SaaS Cardápio Inteligente</title>
+    <title>SaaS Cardápio Profissional</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
 
     <style>
         :root { --primary: #e74c3c; --dark: #2c3e50; --light: #f8f9fa; --success: #27ae60; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        body { background: var(--light); padding-bottom: 100px; }
+        body { background: var(--light); padding-bottom: 110px; }
         
         header { background: white; padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
         .header-content { display: flex; align-items: center; gap: 15px; max-width: 800px; margin: 0 auto; position: relative; }
-        #loja-logo { width: 60px; height: 60px; border-radius: 50%; object-fit: cover; background: #eee; cursor: pointer; }
+        #loja-logo { width: 65px; height: 65px; border-radius: 50%; object-fit: cover; background: #eee; cursor: pointer; border: 2px solid var(--primary); }
         
-        .toast { position: fixed; top: 80px; right: 20px; background: var(--success); color: white; padding: 10px 20px; border-radius: 5px; display: none; z-index: 3000; animation: fadeIn 0.5s; }
-        @keyframes fadeIn { from {opacity:0} to {opacity:1} }
+        .toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: var(--dark); color: white; padding: 12px 25px; border-radius: 30px; display: none; z-index: 3000; font-size: 0.9rem; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
 
         #cardapio-corpo { max-width: 800px; margin: 20px auto; padding: 0 15px; }
-        .item-produto { background: white; margin-bottom: 12px; padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .info-p h3 { font-size: 1rem; }
-        .preco { color: var(--primary); font-weight: 700; }
-        .foto-p img { width: 80px; height: 80px; border-radius: 10px; object-fit: cover; cursor: pointer; }
+        .item-produto { background: white; margin-bottom: 12px; padding: 15px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+        .info-p h3 { font-size: 1rem; color: var(--dark); }
+        .info-p p { font-size: 0.8rem; color: #777; margin: 4px 0; }
+        .preco { color: var(--primary); font-weight: 700; font-size: 1.1rem; }
+        .foto-p img { width: 90px; height: 90px; border-radius: 12px; object-fit: cover; cursor: pointer; border: 1px solid #eee; }
 
-        .btn-add-cart { background: var(--primary); color: white; border: none; padding: 5px 10px; border-radius: 5px; cursor: pointer; margin-top: 10px; }
+        .btn-add { background: var(--primary); color: white; border: none; padding: 8px 15px; border-radius: 8px; cursor: pointer; font-weight: 600; margin-top: 8px; width: 100%; }
 
-        #btn-carrinho-fixo { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--primary); color: white; padding: 15px 25px; border-radius: 50px; display: flex; justify-content: space-between; width: 90%; max-width: 450px; box-shadow: 0 5px 20px rgba(231, 76, 60, 0.4); cursor: pointer; z-index: 999; font-weight: bold; }
+        #btn-carrinho-fixo { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--primary); color: white; padding: 18px 30px; border-radius: 50px; display: flex; justify-content: space-between; width: 92%; max-width: 450px; box-shadow: 0 8px 25px rgba(231, 76, 60, 0.4); cursor: pointer; z-index: 999; font-weight: bold; }
 
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; align-items: center; justify-content: center; padding: 20px; }
-        .modal-content { background: white; width: 100%; max-width: 500px; padding: 25px; border-radius: 20px; max-height: 90vh; overflow-y: auto; }
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 2000; align-items: center; justify-content: center; overflow-y: auto; }
+        .modal-content { background: white; width: 95%; max-width: 500px; padding: 25px; border-radius: 20px; margin: 20px auto; }
         
-        #area-admin { display: none; background: #34495e; padding: 10px; text-align: center; color: white; }
-        .edit-active { border: 1px dashed red !important; }
+        input, select { width: 100%; padding: 12px; margin-bottom: 10px; border: 1px solid #ddd; border-radius: 10px; font-size: 0.9rem; }
+        .area-admin { display: none; background: #2c3e50; padding: 10px; text-align: center; color: white; position: sticky; top: 105px; z-index: 99; }
+        
+        /* Loading Spinner */
+        .spinner { display: none; border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
 
-    <div id="toast" class="toast">Adicionado ao carrinho! ✅</div>
+    <div id="toast" class="toast">✓ Item adicionado!</div>
 
-    <div id="area-admin">
-        <button onclick="adicionarNovoProduto()" style="padding:5px 10px; cursor:pointer;">+ Novo Produto</button>
-        <button onclick="alert('Clique nas fotos ou textos para editar')" style="padding:5px 10px; cursor:pointer;">Como Editar?</button>
+    <div id="area-admin" class="area-admin">
+        <button onclick="adicionarNovoProduto()" style="padding:8px; border-radius:5px; border:none; background:var(--success); color:white; font-weight:600;">+ Adicionar Produto</button>
+        <small style="display:block; margin-top:5px;">Clique nos textos para editar. Clique nas fotos para trocar.</small>
+        <input type="file" id="upload-file" style="display:none" onchange="processarUpload(event)">
     </div>
 
     <header>
         <div class="header-content">
-            <button onclick="loginAdmin()" style="position:absolute; right:0; top:0; background:none; border:none; color:#ccc;"><i class="fa fa-cog"></i></button>
-            <img id="loja-logo" onclick="trocarLogo()" src="" alt="Logo">
+            <button onclick="loginAdmin()" style="position:absolute; right:0; top:0; background:none; border:none; color:#ddd;"><i class="fa fa-cog"></i></button>
+            <img id="loja-logo" onclick="acionarUpload('logo')" src="" alt="Logo">
             <div>
                 <h1 id="nome-loja">Carregando...</h1>
-                <p id="endereco-loja" style="font-size:0.7rem; color:#888"></p>
+                <p id="rua-loja" style="font-size:0.7rem; color:#888"></p>
             </div>
         </div>
     </header>
 
     <main id="cardapio-corpo"></main>
 
-    <div id="btn-carrinho-fixo" onclick="abrirModalCarrinho()">
-        <span><i class="fa fa-shopping-basket"></i> <span id="cart-qtd">0</span> ITENS</span>
+    <div id="btn-carrinho-fixo" onclick="abrirCarrinho()">
+        <span><i class="fa fa-shopping-cart"></i> <span id="cart-qtd">0</span></span>
         <span id="cart-total">R$ 0,00</span>
     </div>
 
     <div id="modal-carrinho" class="modal">
         <div class="modal-content">
-            <h2>Seu Pedido</h2>
-            <div id="lista-carrinho"></div>
-            <div style="margin-top:20px;">
-                <input type="text" id="cliente-nome" placeholder="Seu Nome" style="width:100%; padding:10px; margin-bottom:10px;">
-                <input type="text" id="cliente-end" onblur="calcularFrete()" placeholder="CEP ou Endereço de Entrega" style="width:100%; padding:10px;">
-                <p id="taxa-info" style="font-size:0.8rem; color:var(--success); margin:10px 0;"></p>
+            <h2 style="margin-bottom:15px">Resumo do Pedido</h2>
+            <div id="itens-checkout" style="border-bottom:1px solid #eee; padding-bottom:10px; margin-bottom:15px"></div>
+            
+            <label>Seu Nome:</label>
+            <input type="text" id="c-nome" placeholder="Nome Completo">
+            
+            <label>Endereço em Jaraguá/Guaramirim/Schroeder:</label>
+            <input type="text" id="c-end" onblur="calcularRota()" placeholder="Rua, Número, Bairro e Cidade">
+            
+            <label>Forma de Pagamento:</label>
+            <select id="c-pag">
+                <option value="Dinheiro">Dinheiro</option>
+                <option value="Pix">Pix (Pagamento na Entrega)</option>
+                <option value="Cartão de Crédito">Cartão de Crédito</option>
+                <option value="Cartão de Débito">Cartão de Débito</option>
+            </select>
+
+            <div id="resumo-valores" style="background:#f9f9f9; padding:15px; border-radius:10px; margin-top:10px">
+                <p>Subtotal: <span id="v-sub">R$ 0,00</span></p>
+                <p>Taxa de Entrega: <span id="v-taxa">R$ 0,00</span></p>
+                <h3 style="color:var(--primary)">Total: <span id="v-total">R$ 0,00</span></h3>
             </div>
-            <button onclick="enviarWhatsApp()" style="width:100%; background:var(--success); color:white; border:none; padding:15px; border-radius:10px; font-weight:bold; cursor:pointer;">FINALIZAR NO WHATSAPP</button>
-            <button onclick="fecharModais()" style="width:100%; background:none; border:none; color:#777; margin-top:10px; cursor:pointer;">Fechar</button>
+
+            <button onclick="enviarWhats()" id="btn-final" style="width:100%; background:var(--success); color:white; border:none; padding:18px; border-radius:12px; font-weight:bold; margin-top:15px; cursor:pointer">ENVIAR PEDIDO</button>
+            <button onclick="fecharModais()" style="width:100%; background:none; border:none; color:#999; margin-top:10px; cursor:pointer">Voltar ao cardápio</button>
         </div>
     </div>
 
     <script>
+        // CONFIGURAÇÕES FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyCXA1yP1F-riNkzOX5zJs5gsQ82EzsT7Qg",
             authDomain: "myproject26-10f0e.firebaseapp.com",
@@ -91,6 +115,7 @@
         };
         firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
+        const storage = firebase.storage();
         const GEO_KEY = "208f6874a48c45e68761f3d994db6775";
 
         const params = new URLSearchParams(window.location.search);
@@ -98,20 +123,21 @@
 
         let dadosLoja = {};
         let carrinho = [];
-        let taxaEntrega = 0;
+        let taxaFinal = 0;
+        let uploadTarget = ""; // Para saber se estamos subindo logo ou foto de produto
 
-        async function carregarLoja() {
+        async function init() {
             const snap = await db.ref(`lojas/${LOJA_ID}`).once('value');
             dadosLoja = snap.val();
             if(!dadosLoja) return alert("Loja não encontrada!");
 
             document.getElementById('nome-loja').innerText = dadosLoja.config.nomeLoja;
-            document.getElementById('loja-logo').src = dadosLoja.config.logo || "https://via.placeholder.com/100";
-            document.getElementById('endereco-loja').innerText = dadosLoja.config.rua || "";
-            renderizar();
+            document.getElementById('loja-logo').src = dadosLoja.config.logo;
+            document.getElementById('rua-loja').innerText = dadosLoja.config.rua;
+            render();
         }
 
-        function renderizar() {
+        function render() {
             const corpo = document.getElementById('cardapio-corpo');
             corpo.innerHTML = "";
             dadosLoja.produtos?.forEach((p, i) => {
@@ -121,91 +147,123 @@
                             <h3 class="edit" data-path="produtos/${i}/title">${p.title}</h3>
                             <p class="edit" data-path="produtos/${i}/ingredientes">${p.ingredientes}</p>
                             <span class="preco">R$ <span class="edit" data-path="produtos/${i}/price">${p.price.toFixed(2)}</span></span>
-                            <button class="btn-add-cart" onclick="addCarrinho(${i})">Adicionar ao Carrinho</button>
+                            <button class="btn-add" onclick="add(${i})">Adicionar</button>
                         </div>
                         <div class="foto-p">
-                            <img src="${p.image}" onclick="trocarImagemProduto(${i})">
+                            <img src="${p.image}" onclick="acionarUpload('produto', ${i})">
                         </div>
                     </div>
                 `;
             });
         }
 
-        function addCarrinho(i) {
+        function add(i) {
             carrinho.push(dadosLoja.produtos[i]);
-            const toast = document.getElementById('toast');
-            toast.style.display = 'block';
-            setTimeout(() => toast.style.display = 'none', 2000);
-            atualizarCarrinho();
+            const t = document.getElementById('toast');
+            t.style.display = 'block'; setTimeout(() => t.style.display='none', 2000);
+            updateCartBar();
         }
 
-        function atualizarCarrinho() {
-            const total = carrinho.reduce((a, b) => a + b.price, 0) + taxaEntrega;
+        function updateCartBar() {
+            const sub = carrinho.reduce((a, b) => a + b.price, 0);
             document.getElementById('cart-qtd').innerText = carrinho.length;
-            document.getElementById('cart-total').innerText = `R$ ${total.toFixed(2)}`;
+            document.getElementById('cart-total').innerText = `R$ ${sub.toFixed(2)}`;
         }
 
-        async function calcularFrete() {
-            const endCliente = document.getElementById('cliente-end').value;
-            if(!endCliente) return;
+        async function calcularRota() {
+            const dest = document.getElementById('c-end').value;
+            if(!dest) return;
+            
+            // Limitação Geográfica: Bounding Box para Jaraguá, Guaramirim, Schroeder
+            const filter = "&filter=rect:-49.2559,-26.6234,-48.9056,-26.3533"; 
 
             try {
-                const res = await fetch(`https://api.geoapify.com/v1/routing?waypoints=${dadosLoja.config.lat},${dadosLoja.config.lon}|${endCliente}&mode=drive&apiKey=${GEO_KEY}`);
+                const url = `https://api.geoapify.com/v1/routing?waypoints=${dadosLoja.config.lat},${dadosLoja.config.lon}|${encodeURIComponent(dest)}${filter}&mode=drive&apiKey=${GEO_KEY}`;
+                const res = await fetch(url);
                 const data = await res.json();
-                const distKm = data.features[0].properties.distance / 1000;
-                taxaEntrega = distKm * (dadosLoja.config.valorKm || 1.5);
-                document.getElementById('taxa-info').innerText = `Distância: ${distKm.toFixed(1)}km | Taxa: R$ ${taxaEntrega.toFixed(2)}`;
-                atualizarCarrinho();
+                
+                if(!data.features) throw new Error();
+
+                const km = data.features[0].properties.distance / 1000;
+                taxaFinal = km * (dadosLoja.config.valorKm || 1.5);
+                
+                const sub = carrinho.reduce((a, b) => a + b.price, 0);
+                document.getElementById('v-sub').innerText = `R$ ${sub.toFixed(2)}`;
+                document.getElementById('v-taxa').innerText = `R$ ${taxaFinal.toFixed(2)}`;
+                document.getElementById('v-total').innerText = `R$ ${(sub + taxaFinal).toFixed(2)}`;
             } catch (e) {
-                alert("Erro ao calcular frete. Verifique o endereço.");
+                alert("Endereço fora da área de atendimento ou não encontrado!");
             }
         }
 
-        async function enviarWhatsApp() {
-            const nome = document.getElementById('cliente-nome').value;
-            const end = document.getElementById('cliente-end').value;
-            const itensStr = carrinho.map(i => i.title).join(", ");
-            const total = carrinho.reduce((a, b) => a + b.price, 0) + taxaEntrega;
+        function enviarWhats() {
+            const nome = document.getElementById('c-nome').value;
+            const end = document.getElementById('c-end').value;
+            const pag = document.getElementById('c-pag').value;
+            if(!nome || !end) return alert("Preencha tudo!");
+
+            const sub = carrinho.reduce((a, b) => a + b.price, 0);
+            const resumo = carrinho.map(i => i.title).join(", ");
+            const texto = `*NOVO PEDIDO - ${dadosLoja.config.nomeLoja}*%0A%0A*Cliente:* ${nome}%0A*Itens:* ${resumo}%0A*Entrega:* ${end}%0A*Pagamento:* ${pag}%0A%0A*Subtotal:* R$ ${sub.toFixed(2)}%0A*Taxa:* R$ ${taxaFinal.toFixed(2)}%0A*TOTAL:* R$ ${(sub+taxaFinal).toFixed(2)}`;
             
-            const msg = `*Pedido: ${dadosLoja.config.nomeLoja}*%0A*Cliente:* ${nome}%0A*Itens:* ${itensStr}%0A*Entrega:* ${end}%0A*Taxa:* R$ ${taxaEntrega.toFixed(2)}%0A*Total:* R$ ${total.toFixed(2)}`;
-            window.open(`https://wa.me/${dadosLoja.config.whatsapp}?text=${msg}`);
+            window.open(`https://wa.me/${dadosLoja.config.whatsapp}?text=${texto}`);
         }
 
-        // ADMIN FUNCTIONS
+        // --- ADMIN & UPLOAD ---
         function loginAdmin() {
             const p = prompt("Senha:");
             if(p === dadosLoja.config.senhaAdmin) {
-                document.getElementById('area-admin').style.display = 'block';
+                document.getElementById('area-admin').style.display='block';
                 document.querySelectorAll('.edit').forEach(el => {
                     el.contentEditable = true;
-                    el.classList.add('edit-active');
                     el.onblur = async () => {
-                        let val = el.innerText;
-                        if(el.getAttribute('data-path').includes('price')) val = parseFloat(val);
-                        await db.ref(`lojas/${LOJA_ID}/${el.getAttribute('data-path')}`).set(val);
+                        let v = el.innerText;
+                        if(el.getAttribute('data-path').includes('price')) v = parseFloat(v);
+                        await db.ref(`lojas/${LOJA_ID}/${el.getAttribute('data-path')}`).set(v);
                     };
                 });
             }
         }
 
-        async function trocarLogo() {
+        function acionarUpload(tipo, index = null) {
             if(document.getElementById('area-admin').style.display !== 'block') return;
-            const url = prompt("URL da nova logo:");
-            if(url) await db.ref(`lojas/${LOJA_ID}/config/logo`).set(url);
+            uploadTarget = { tipo, index };
+            document.getElementById('upload-file').click();
+        }
+
+        async function processarUpload(e) {
+            const file = e.target.files[0];
+            if(!file) return;
+
+            const ref = storage.ref(`lojas/${LOJA_ID}/${Date.now()}_${file.name}`);
+            alert("Subindo imagem, aguarde...");
+            
+            await ref.put(file);
+            const url = await ref.getDownloadURL();
+
+            if(uploadTarget.tipo === 'logo') {
+                await db.ref(`lojas/${LOJA_ID}/config/logo`).set(url);
+            } else {
+                await db.ref(`lojas/${LOJA_ID}/produtos/${uploadTarget.index}/image`).set(url);
+            }
             location.reload();
         }
 
-        async function trocarImagemProduto(i) {
-            if(document.getElementById('area-admin').style.display !== 'block') return;
-            const url = prompt("URL da imagem do produto:");
-            if(url) await db.ref(`lojas/${LOJA_ID}/produtos/${i}/image`).set(url);
+        async function adicionarNovoProduto() {
+            const p = dadosLoja.produtos || [];
+            p.push({title: "Novo Produto", ingredientes: "Descrição...", price: 0.00, image: "https://via.placeholder.com/100"});
+            await db.ref(`lojas/${LOJA_ID}/produtos`).set(p);
             location.reload();
         }
 
-        function abrirModalCarrinho() { document.getElementById('modal-carrinho').style.display = 'flex'; }
-        function fecharModais() { document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); }
+        function abrirCarrinho() { 
+            if(carrinho.length === 0) return alert("Carrinho vazio!");
+            document.getElementById('itens-checkout').innerHTML = carrinho.map(i => `<div>${i.title} - R$ ${i.price.toFixed(2)}</div>`).join("");
+            document.getElementById('modal-carrinho').style.display='flex'; 
+        }
+        function fecharModais() { document.querySelectorAll('.modal').forEach(m => m.style.display='none'); }
 
-        window.onload = carregarLoja;
+        window.onload = init;
     </script>
 </body>
 </html>
