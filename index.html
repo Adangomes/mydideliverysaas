@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cardápio Digital Profissional</title>
+    <title>Cardápio Digital</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
@@ -12,46 +12,50 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-storage-compat.js"></script>
 
     <style>
-        :root { --primary: #e74c3c; --dark: #2c3e50; --light: #f8f9fa; --success: #27ae60; }
+        :root { --primary: #e74c3c; --dark: #2c3e50; --success: #27ae60; }
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        body { background: white; padding-bottom: 110px; }
-        
+        body { background: #fff; color: #333; padding-bottom: 100px; }
+
         /* ADMIN BAR */
-        .area-admin { display: none; background: #1a252f; padding: 15px; text-align: center; color: white; position: sticky; top: 0; z-index: 1001; box-shadow: 0 4px 10px rgba(0,0,0,0.3); }
-        .btn-admin { padding: 10px 15px; border-radius: 8px; border: none; color: white; font-weight: bold; cursor: pointer; margin: 5px; font-size: 0.8rem; }
-        .btn-add { background: var(--success); }
-        .btn-save-all { background: #3498db; border: 2px solid white; }
+        .area-admin { display: none; background: #1a252f; padding: 15px; text-align: center; position: sticky; top: 0; z-index: 1100; color: white; }
+        .btn-adm { padding: 8px 12px; border-radius: 6px; border: none; cursor: pointer; font-weight: bold; margin: 3px; font-size: 12px; }
+        .btn-save { background: #3498db; border: 2px solid #fff; }
 
-        header { background: white; padding: 20px; border-bottom: 1px solid #eee; }
+        /* HEADER ESTILO BEST DELIVERY */
+        header { padding: 20px; border-bottom: 1px solid #eee; position: sticky; top: 0; background: white; z-index: 1000; }
         .header-content { display: flex; align-items: center; gap: 15px; max-width: 800px; margin: 0 auto; position: relative; }
-        #loja-logo { width: 60px; height: 60px; border-radius: 12px; object-fit: cover; background: #eee; border: 2px dashed transparent; }
-        
-        .user-access { position: absolute; right: 0; background: #f4f4f4; border: none; color: #888; width: 40px; height: 40px; border-radius: 8px; cursor: pointer; }
+        #loja-logo { width: 55px; height: 55px; border-radius: 12px; object-fit: cover; background: #f0f0f0; }
+        .user-access { position: absolute; right: 0; background: #f4f4f4; border: none; width: 40px; height: 40px; border-radius: 10px; color: #888; cursor: pointer; }
 
-        .categorias-wrapper { padding: 15px 0; overflow-x: auto; white-space: nowrap; border-bottom: 1px solid #eee; position: sticky; top: 0; background: white; z-index: 90; }
-        .cat-btn { display: inline-block; background: #f4f4f4; padding: 6px 18px; border-radius: 20px; margin-left: 10px; font-size: 0.85rem; font-weight: 600; color: #666; text-decoration: none; }
+        /* CATEGORIAS */
+        .categorias-nav { display: flex; overflow-x: auto; padding: 15px; gap: 10px; background: #fff; border-bottom: 1px solid #eee; position: sticky; top: 96px; z-index: 999; }
+        .categorias-nav::-webkit-scrollbar { display: none; }
+        .cat-item { background: #f4f4f4; padding: 6px 15px; border-radius: 20px; font-size: 13px; font-weight: 600; color: #666; white-space: nowrap; text-decoration: none; }
+        .cat-item.active { background: var(--primary); color: #fff; }
 
-        .section-title { padding: 20px 15px 10px; font-size: 1.1rem; font-weight: 700; color: var(--dark); }
-        #cardapio-corpo { max-width: 800px; margin: 0 auto; padding: 0 15px; }
-        
-        .item-produto { display: flex; justify-content: space-between; gap: 15px; border-bottom: 1px solid #f1f1f1; padding: 15px 0; }
-        .info-p h3 { font-size: 0.95rem; margin-bottom: 5px; }
-        .info-p p { font-size: 0.8rem; color: #888; margin-bottom: 8px; }
-        .preco { font-weight: 700; color: var(--dark); }
-        
-        .foto-p img { width: 90px; height: 90px; border-radius: 12px; object-fit: cover; background: #f9f9f9; border: 2px dashed transparent; }
+        /* LISTA PRODUTOS */
+        .container { max-width: 800px; margin: 0 auto; padding: 15px; }
+        .section-title { font-size: 18px; font-weight: 700; margin: 20px 0 10px; color: var(--dark); }
+        .card-produto { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid #f5f5f5; cursor: pointer; transition: 0.2s; }
+        .card-produto:active { background: #fafafa; }
+        .prod-info { flex: 1; padding-right: 15px; }
+        .prod-info h3 { font-size: 15px; color: #333; margin-bottom: 4px; }
+        .prod-info p { font-size: 12px; color: #888; line-height: 1.4; margin-bottom: 8px; }
+        .prod-price { font-weight: 700; color: #333; font-size: 14px; }
+        .prod-img img { width: 95px; height: 95px; border-radius: 12px; object-fit: cover; background: #f9f9f9; }
 
-        /* MODO EDIÇÃO ATIVO */
-        .edit-active { border: 1px dashed var(--primary) !important; background: #fffde7; padding: 2px; }
+        /* MODO EDIÇÃO VISUAL */
+        .editando { border: 1px dashed var(--primary) !important; background: #fffde7 !important; }
 
-        #btn-carrinho-fixo { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: var(--primary); color: white; padding: 15px 25px; border-radius: 50px; display: flex; justify-content: space-between; width: 92%; max-width: 450px; z-index: 999; font-weight: bold; box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+        #btn-floating-cart { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); width: 90%; max-width: 400px; background: var(--primary); color: white; padding: 15px; border-radius: 50px; display: flex; justify-content: space-between; font-weight: bold; box-shadow: 0 5px 15px rgba(0,0,0,0.2); cursor: pointer; z-index: 1000; }
     </style>
 </head>
 <body>
 
     <div id="area-admin" class="area-admin">
-        <button class="btn-admin btn-add" onclick="adicionarNovoProduto()"><i class="fa fa-plus"></i> NOVO PRODUTO</button>
-        <button class="btn-admin btn-save-all" onclick="salvarAlteracoesNoFirebase()"><i class="fa fa-save"></i> SALVAR TUDO AGORA</button>
+        <button class="btn-adm" style="background:var(--success); color:white" onclick="adicionarNovoProduto()">+ PRODUTO</button>
+        <button class="btn-adm" style="background:#666; color:white" onclick="novaCategoria()">+ CATEGORIA</button>
+        <button class="btn-adm btn-save" onclick="salvarFirebase()">SALVAR ALTERAÇÕES</button>
         <input type="file" id="upload-file" style="display:none" onchange="processarUpload(event)">
     </div>
 
@@ -59,21 +63,21 @@
         <div class="header-content">
             <img id="loja-logo" onclick="acionarUpload('logo')" src="" alt="Logo">
             <div>
-                <h1 id="nome-loja" class="edit-field" data-type="config" data-key="nomeLoja">Carregando...</h1>
-                <p id="rua-loja" class="edit-field" data-type="config" data-key="rua" style="font-size:0.75rem; color:#888"></p>
+                <h1 id="nome-loja" contenteditable="false">...</h1>
+                <p id="rua-loja" style="font-size:12px; color:#999" contenteditable="false">...</p>
             </div>
             <button class="user-access" onclick="loginAdmin()"><i class="fa fa-user-circle"></i></button>
         </div>
     </header>
 
-    <div class="categorias-wrapper" id="cat-list"></div>
+    <div class="categorias-nav" id="cat-nav"></div>
 
-    <main id="cardapio-corpo">
-        <p style="text-align:center; padding:50px;">Carregando cardápio...</p>
+    <main class="container" id="lista-produtos">
+        <p style="text-align:center; padding:40px;">Carregando cardápio...</p>
     </main>
 
-    <div id="btn-carrinho-fixo">
-        <span>🛒 <span id="cart-qtd">0</span> Itens</span>
+    <div id="btn-floating-cart" onclick="verCarrinho()">
+        <span>🛒 <span id="cart-count">0</span> Itens</span>
         <span id="cart-total">R$ 0,00</span>
     </div>
 
@@ -91,52 +95,53 @@
         const db = firebase.database();
         const storage = firebase.storage();
 
-        const params = new URLSearchParams(window.location.search);
-        const LOJA_ID = params.get('loja');
-        let dadosLoja = {};
-        let uploadTarget = null;
+        const LOJA_ID = new URLSearchParams(window.location.search).get('loja');
+        let dadosLoja = null;
         let modoEdicao = false;
+        let uploadRef = null;
 
-        async function init() {
-            if(!LOJA_ID) return alert("ID da loja não encontrado na URL");
-            
-            // Listener em tempo real
+        async function carregarDados() {
+            if(!LOJA_ID) {
+                document.body.innerHTML = "<h1>Erro: Loja não especificada na URL</h1>";
+                return;
+            }
             db.ref(`lojas/${LOJA_ID}`).on('value', snap => {
                 dadosLoja = snap.val();
-                if(dadosLoja) render();
+                if(dadosLoja) renderizar();
+                else document.body.innerHTML = "<h1>Loja não encontrada!</h1>";
             });
         }
 
-        function render() {
-            document.getElementById('nome-loja').innerText = dadosLoja.config.nomeLoja;
-            document.getElementById('loja-logo').src = dadosLoja.config.logo;
-            document.getElementById('rua-loja').innerText = dadosLoja.config.rua;
+        function renderizar() {
+            // Evitar undefined
+            document.getElementById('nome-loja').innerText = dadosLoja.config?.nomeLoja || "Minha Loja";
+            document.getElementById('loja-logo').src = dadosLoja.config?.logo || "";
+            document.getElementById('rua-loja').innerText = dadosLoja.config?.rua || "Endereço não configurado";
 
-            const corpo = document.getElementById('cardapio-corpo');
-            const catList = document.getElementById('cat-list');
-            corpo.innerHTML = "";
-            catList.innerHTML = "";
+            const container = document.getElementById('lista-produtos');
+            const nav = document.getElementById('cat-nav');
+            container.innerHTML = "";
+            nav.innerHTML = "";
 
             const produtos = dadosLoja.produtos || [];
-            const categorias = [...new Set(produtos.map(p => p.categoria || "Geral"))];
+            const categorias = [...new Set(produtos.map(p => p.categoria || "Outros"))];
 
             categorias.forEach(cat => {
-                catList.innerHTML += `<a href="#" class="cat-btn">${cat}</a>`;
-                corpo.innerHTML += `<div class="section-title">${cat}</div>`;
+                nav.innerHTML += `<a href="#${cat}" class="cat-item">${cat}</a>`;
+                container.innerHTML += `<div class="section-title" id="${cat}">${cat}</div>`;
 
                 produtos.forEach((p, i) => {
-                    if((p.categoria || "Geral") === cat) {
-                        corpo.innerHTML += `
-                            <div class="item-produto">
-                                <div class="info-p" style="flex:1">
-                                    <h3 contenteditable="${modoEdicao}" class="${modoEdicao?'edit-active':''}" onblur="atualizarLocal(${i}, 'title', this.innerText)">${p.title}</h3>
-                                    <p contenteditable="${modoEdicao}" class="${modoEdicao?'edit-active':''}" onblur="atualizarLocal(${i}, 'ingredientes', this.innerText)">${p.ingredientes}</p>
-                                    <small contenteditable="${modoEdicao}" style="color:var(--primary); font-weight:bold;" class="${modoEdicao?'edit-active':''}" onblur="atualizarLocal(${i}, 'categoria', this.innerText)">${p.categoria || 'Geral'}</small>
-                                    <div class="preco">R$ <span contenteditable="${modoEdicao}" class="${modoEdicao?'edit-active':''}" onblur="atualizarLocal(${i}, 'price', this.innerText)">${parseFloat(p.price).toFixed(2)}</span></div>
+                    if(p.categoria === cat) {
+                        container.innerHTML += `
+                            <div class="card-produto" onclick="abrirProduto(${i})">
+                                <div class="prod-info">
+                                    <h3 contenteditable="${modoEdicao}" class="${modoEdicao?'editando':''}" onblur="editLocal(${i}, 'title', this.innerText)">${p.title}</h3>
+                                    <p contenteditable="${modoEdicao}" class="${modoEdicao?'editando':''}" onblur="editLocal(${i}, 'ingredientes', this.innerText)">${p.ingredientes}</p>
+                                    <div class="prod-price">R$ <span contenteditable="${modoEdicao}" class="${modoEdicao?'editando':''}" onblur="editLocal(${i}, 'price', this.innerText)">${parseFloat(p.price).toFixed(2)}</span></div>
+                                    ${modoEdicao ? `<small style="color:red" onclick="remover(${i})">Excluir Item</small>` : ''}
                                 </div>
-                                <div class="foto-p">
-                                    <img src="${p.image}" class="${modoEdicao?'edit-active':''}" onclick="acionarUpload('produto', ${i})">
-                                    ${modoEdicao ? `<br><small style="color:red" onclick="removerProduto(${i})">Excluir</small>` : ''}
+                                <div class="prod-img">
+                                    <img src="${p.image}" onclick="acionarUpload('produto', ${i})" class="${modoEdicao?'editando':''}">
                                 </div>
                             </div>
                         `;
@@ -145,90 +150,68 @@
             });
         }
 
-        // 1. Atualiza apenas na memória do navegador enquanto você edita
-        function atualizarLocal(index, campo, valor) {
-            if(campo === 'price') valor = parseFloat(valor.replace(',', '.'));
+        function editLocal(index, campo, valor) {
+            if(campo === 'price') valor = valor.replace(',', '.');
             dadosLoja.produtos[index][campo] = valor;
         }
 
-        // 2. SALVAR TUDO NO FIREBASE (Botão azul)
-        async function salvarAlteracoesNoFirebase() {
+        async function salvarFirebase() {
             try {
-                const btn = document.querySelector('.btn-save-all');
-                btn.innerText = "SALVANDO...";
-                await db.ref(`lojas/${LOJA_ID}`).update(dadosLoja);
-                btn.innerHTML = "<i class='fa fa-save'></i> SALVAR TUDO AGORA";
-                alert("✅ Tudo salvo com sucesso no banco de dados!");
-            } catch (e) {
-                alert("Erro ao salvar: " + e.message);
-            }
+                await db.ref(`lojas/${LOJA_ID}`).set(dadosLoja);
+                alert("Salvo com sucesso!");
+                location.reload();
+            } catch (e) { alert("Erro ao salvar!"); }
         }
 
         function loginAdmin() {
-            const p = prompt("Senha do Restaurante:");
-            if(p === dadosLoja.config.senhaAdmin) {
+            const pass = prompt("Senha Admin:");
+            if(pass === dadosLoja.config.senhaAdmin) {
                 modoEdicao = true;
                 document.getElementById('area-admin').style.display = 'block';
-                document.getElementById('loja-logo').style.border = "2px dashed red";
-                render();
-            } else {
-                alert("Senha incorreta!");
+                document.getElementById('nome-loja').contentEditable = true;
+                document.getElementById('rua-loja').contentEditable = true;
+                renderizar();
             }
         }
 
-        function acionarUpload(tipo, index = null) {
+        function acionarUpload(tipo, index) {
             if(!modoEdicao) return;
-            uploadTarget = { tipo, index };
+            uploadRef = { tipo, index };
             document.getElementById('upload-file').click();
         }
 
         async function processarUpload(e) {
             const file = e.target.files[0];
             if(!file) return;
-
-            const btn = document.querySelector('.btn-save-all');
-            btn.innerText = "SUBINDO IMAGEM...";
-
-            try {
-                const ref = storage.ref(`lojas/${LOJA_ID}/${Date.now()}_${file.name}`);
-                const task = await ref.put(file);
-                const url = await task.ref.getDownloadURL();
-
-                if(uploadTarget.tipo === 'logo') {
-                    dadosLoja.config.logo = url;
-                } else {
-                    dadosLoja.produtos[uploadTarget.index].image = url;
-                }
-                
-                // Salva automaticamente após upload de imagem para garantir
-                await salvarAlteracoesNoFirebase();
-                render();
-            } catch (err) {
-                alert("Erro no upload: " + err.message);
-            }
+            const ref = storage.ref(`lojas/${LOJA_ID}/${Date.now()}_${file.name}`);
+            await ref.put(file);
+            const url = await ref.getDownloadURL();
+            if(uploadRef.tipo === 'logo') dadosLoja.config.logo = url;
+            else dadosLoja.produtos[uploadRef.index].image = url;
+            salvarFirebase();
         }
 
-        async function adicionarNovoProduto() {
+        function adicionarNovoProduto() {
             if(!dadosLoja.produtos) dadosLoja.produtos = [];
-            dadosLoja.produtos.push({
-                title: "Novo Produto",
-                ingredientes: "Descrição aqui...",
-                price: 0.00,
-                categoria: "Geral",
-                image: "https://via.placeholder.com/150"
-            });
-            render();
-            alert("Produto adicionado na lista! Não esqueça de clicar em SALVAR TUDO no final.");
+            const cat = prompt("Para qual categoria?", "Geral");
+            dadosLoja.produtos.push({ title: "Novo Item", ingredientes: "Descrição...", price: "0.00", categoria: cat, image: "https://via.placeholder.com/150" });
+            renderizar();
         }
 
-        async function removerProduto(index) {
-            if(confirm("Deseja excluir este item?")) {
-                dadosLoja.produtos.splice(index, 1);
-                render();
+        function novaCategoria() {
+            const nome = prompt("Nome da nova categoria:");
+            if(nome) {
+                dadosLoja.produtos.push({ title: "Primeiro item da categoria", ingredientes: "...", price: "0.00", categoria: nome, image: "https://via.placeholder.com/150" });
+                renderizar();
             }
         }
 
-        window.onload = init;
+        function abrirProduto(i) {
+            if(modoEdicao) return;
+            alert("Você clicou em: " + dadosLoja.produtos[i].title + "\nAqui abriria a lista de adicionais/clicáveis.");
+        }
+
+        window.onload = carregarDados;
     </script>
 </body>
 </html>
